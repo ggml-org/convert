@@ -7,7 +7,7 @@ set -euo pipefail
 echo ">>> Starting HF Job: Model Convert & Quantize"
 
 hf jobs run \
-  --flavor cpu-performance \
+  --flavor cpu-xl \
   --secrets HF_TOKEN \
   --env HF_HUB_ENABLE_HF_XET=1 \
   python:3.11-slim \

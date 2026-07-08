@@ -1,12 +1,12 @@
 #!/bin/bash
 set -euo pipefail
 
-WORK_DIR="/home/ggerganov/hf-models-convert"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MODEL_SRC="Qwen/Qwen3.5-0.8B"
 MODEL_DST="ggerganov/testing"
 QUANT_TYPE="Q8_0"
 
-cd "$WORK_DIR"
+cd "$SCRIPT_DIR"
 
 # Check for HF_TOKEN
 if [ -z "${HF_TOKEN:-}" ]; then
@@ -27,6 +27,7 @@ if [ -d "llama.cpp" ]; then
 else
   git clone --depth 1 https://github.com/ggml-org/llama.cpp.git
 fi
+
 echo ">>> Building llama-quantize"
 cd llama.cpp
 rm -rf build
@@ -71,15 +72,19 @@ WIP
 
 MODELCARD
 
+# Re-install HF CLI (llama.cpp deps may have uninstalled it)
+echo ">>> Re-installing HF CLI"
+pip install -r requirements.txt
+
 # ── Step 5: Create destination repo & upload ────────────────────────────────
-hf repo create "$MODEL_DST" --repo-type model --exist-ok --token "$HF_TOKEN"
+hf repos create "$MODEL_DST" --type model --exist-ok --token "$HF_TOKEN"
 
 # Upload README.md
-hf upload "$MODEL_DST" ./model-quantized/README.md --repo-type model \
+hf upload "$MODEL_DST" ./model-quantized/README.md --type model \
   --token "$HF_TOKEN"
 
 # Upload Q8_0 GGUF file
-hf upload "$MODEL_DST" ./model-quantized/*.gguf --repo-type model \
+hf upload "$MODEL_DST" ./model-quantized/*.gguf --type model \
   --token "$HF_TOKEN"
 
 echo ">>> Done! Model uploaded to https://huggingface.co/$MODEL_DST"

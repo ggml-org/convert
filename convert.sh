@@ -11,9 +11,12 @@ cd "$SCRIPT_DIR"
 # Check for HF_TOKEN
 if [ -z "${HF_TOKEN:-}" ]; then
   echo "Error: HF_TOKEN environment variable is not set"
-  echo "Usage: export HF_TOKEN=your_token && ./convert.sh"
   exit 1
 fi
+
+# Install HF CLI
+echo ">>> Installing HF CLI"
+pip install -r requirements.txt
 
 # ── Step 1: Clone the source model ──────────────────────────────────────────
 echo ">>> Downloading model: $MODEL_SRC"

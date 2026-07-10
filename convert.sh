@@ -49,7 +49,6 @@ fi
 
 echo ">>> Building llama-quantize"
 cd llama.cpp
-rm -rf build
 mkdir -p build && cd build
 cmake .. -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=OFF -DLLAMA_BUILD_UI=OFF
 make -j$(nproc) llama-quantize
@@ -87,7 +86,12 @@ for (( i=0; i<NUM_MODELS; i++ )); do
   LAST_SHA=$(curl -Ls "https://huggingface.co/$DST/resolve/main/.src_sha")
 
   if [ "$CURRENT_SHA" = "$LAST_SHA" ]; then
-    echo ">>> Source model has not changed (SHA: $CURRENT_SHA). Skipping."
+    echo ">>> Source model has not changed (SHA: $CURRENT_SHA). Uploading README only."
+    bash "$SCRIPT" "$UPLOAD_DIR" "./llama.cpp" "readme-only"
+    pip install -r requirements.txt
+    hf repos create "$DST" --type model --exist-ok --token "$HF_TOKEN"
+    hf upload "$DST" "$UPLOAD_DIR" --include "README.md" --type model --token "$HF_TOKEN"
+    rm -rf "$UPLOAD_DIR"
     continue
   fi
 
@@ -100,31 +104,22 @@ for (( i=0; i<NUM_MODELS; i++ )); do
 
   pip install -r requirements.txt
 
-  cat > "$UPLOAD_DIR/README.md" << MODELCARD
----
-license: other
-tags:
-- gguf
-- quantized
-base_model:
-- $SRC
----
-
-WIP
-
-MODELCARD
-
   echo "$CURRENT_SHA" > "$UPLOAD_DIR/.src_sha"
 
   hf repos create "$DST" --type model --exist-ok --token "$HF_TOKEN"
 
-  INCLUDE_FLAGS="--include .src_sha --include README.md"
+  GGUF_FLAGS=""
   while IFS= read -r file; do
-    INCLUDE_FLAGS="$INCLUDE_FLAGS --include $file"
+    GGUF_FLAGS="$GGUF_FLAGS --include $file"
   done <<< "$PRODUCED_FILES"
 
   hf upload "$DST" "$UPLOAD_DIR" \
-    $INCLUDE_FLAGS \
+    $GGUF_FLAGS \
+    --type model \
+    --token "$HF_TOKEN"
+
+  hf upload "$DST" "$UPLOAD_DIR" \
+    --include ".src_sha" --include "README.md" \
     --type model \
     --token "$HF_TOKEN"
 

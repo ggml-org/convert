@@ -5,12 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 cd "$SCRIPT_DIR"
 
-# ── Model definitions ────────────────────────────────────────────────────────
-# Each model: source repo, display name, sub-script, destination repo
-#
-# To add a new model:
-#   1. Append entries to each array below (same index)
-#   2. Create a corresponding sub-script in scripts/
+# To add a new model: append entries to each array (same index) + create a sub-script in scripts/
 MODEL_SOURCES=(
   "Qwen/Qwen3-0.6B"
   "Qwen/Qwen3-0.6B-Base"
@@ -39,7 +34,6 @@ MODEL_DESTINATIONS=(
   "ggerganov/Qwen3.5-0.8B-Base-GGUF"
 )
 
-# ── Prerequisites ────────────────────────────────────────────────────────────
 if [ -z "${HF_TOKEN:-}" ]; then
   echo "Error: HF_TOKEN environment variable is not set"
   exit 1
@@ -48,7 +42,6 @@ fi
 echo ">>> Installing HF CLI"
 pip install -r requirements.txt
 
-# ── Build llama.cpp (once, shared across all models) ─────────────────────────
 echo ">>> Preparing llama.cpp"
 if [ -d "llama.cpp" ]; then
   echo ">>> llama.cpp already exists, pulling latest master"
@@ -68,11 +61,9 @@ cd ../..
 echo ">>> Installing llama.cpp Python dependencies"
 pip install -r llama.cpp/requirements.txt
 
-# Re-install HF CLI (llama.cpp deps may have uninstalled it)
 echo ">>> Re-installing HF CLI"
 pip install -r requirements.txt
 
-# ── Process each model sequentially ──────────────────────────────────────────
 NUM_MODELS=${#MODEL_SOURCES[@]}
 
 for (( i=0; i<NUM_MODELS; i++ )); do
@@ -87,7 +78,6 @@ for (( i=0; i<NUM_MODELS; i++ )); do
   echo ">>> Processing: $SRC → $DST"
   echo "═══════════════════════════════════════════════════════════"
 
-  # Check for updates
   echo ">>> Checking for updates in $SRC"
   CURRENT_SHA=$(python3 -c "import urllib.request, json, sys; print(json.load(urllib.request.urlopen('https://huggingface.co/api/models/' + sys.argv[1]))['sha'])" "$SRC")
 
@@ -96,7 +86,6 @@ for (( i=0; i<NUM_MODELS; i++ )); do
     exit 1
   fi
 
-  # Fetch LAST_SHA from destination repo
   echo ">>> Checking last processed SHA in $DST"
   LAST_SHA=$(curl -Ls "https://huggingface.co/$DST/resolve/main/.src_sha")
 
@@ -105,20 +94,15 @@ for (( i=0; i<NUM_MODELS; i++ )); do
     continue
   fi
 
-  # Reinstall llama.cpp Python deps
   pip install -r llama.cpp/requirements.txt
 
-  # Run the conversion sub-script; capture produced files
   echo ">>> Running conversion script: $SCRIPT"
   PRODUCED_FILES=$(bash "$SCRIPT" "$UPLOAD_DIR" "./llama.cpp")
 
-  # Prepare upload
   echo ">>> Preparing upload for $DST"
 
-  # Reinstall HF CLI
   pip install -r requirements.txt
 
-  # Create minimal model card
   cat > "$UPLOAD_DIR/README.md" << MODELCARD
 ---
 license: other
@@ -133,19 +117,15 @@ WIP
 
 MODELCARD
 
-  # Store source SHA in destination repo
   echo "$CURRENT_SHA" > "$UPLOAD_DIR/.src_sha"
 
-  # Create destination repo if needed
   hf repos create "$DST" --type model --exist-ok --token "$HF_TOKEN"
 
-  # Build upload include flags
   INCLUDE_FLAGS="--include .src_sha --include README.md"
   while IFS= read -r file; do
     INCLUDE_FLAGS="$INCLUDE_FLAGS --include $file"
   done <<< "$PRODUCED_FILES"
 
-  # Upload
   hf upload "$DST" "$UPLOAD_DIR" \
     $INCLUDE_FLAGS \
     --type model \
@@ -153,7 +133,6 @@ MODELCARD
 
   echo ">>> Uploaded to https://huggingface.co/$DST"
 
-  # Cleanup upload directory
   rm -rf "$UPLOAD_DIR"
 done
 

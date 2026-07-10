@@ -5,7 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 cd "$SCRIPT_DIR"
 
-# To add a new model: append entries to each array (same index) + create a sub-script in scripts/
+# To add a new model: append entries to each array (same index) + create a folder in scripts/
 MODEL_SOURCES=(
   "Qwen/Qwen3-0.6B"
   "Qwen/Qwen3-0.6B-Base"
@@ -21,10 +21,17 @@ MODEL_DISPLAY=(
 )
 
 MODEL_SCRIPTS=(
-  "scripts/convert_qwen3-0.6b.sh"
-  "scripts/convert_qwen3-0.6b-base.sh"
-  "scripts/convert_qwen3.5-0.8b.sh"
-  "scripts/convert_qwen3.5-0.8b-base.sh"
+  "scripts/qwen3-0.6b/convert.sh"
+  "scripts/qwen3-0.6b-base/convert.sh"
+  "scripts/qwen3.5-0.8b/convert.sh"
+  "scripts/qwen3.5-0.8b-base/convert.sh"
+)
+
+MODEL_READMES=(
+  "scripts/qwen3-0.6b/README.md"
+  "scripts/qwen3-0.6b-base/README.md"
+  "scripts/qwen3.5-0.8b/README.md"
+  "scripts/qwen3.5-0.8b-base/README.md"
 )
 
 MODEL_DESTINATIONS=(
@@ -66,6 +73,7 @@ for (( i=0; i<NUM_MODELS; i++ )); do
   SRC="${MODEL_SOURCES[$i]}"
   DISPLAY="${MODEL_DISPLAY[$i]}"
   SCRIPT="${MODEL_SCRIPTS[$i]}"
+  README="${MODEL_READMES[$i]}"
   DST="${MODEL_DESTINATIONS[$i]}"
   UPLOAD_DIR="./upload-${DISPLAY//-/_}"
 
@@ -87,7 +95,8 @@ for (( i=0; i<NUM_MODELS; i++ )); do
 
   if [ "$CURRENT_SHA" = "$LAST_SHA" ]; then
     echo ">>> Source model has not changed (SHA: $CURRENT_SHA). Uploading README only."
-    bash "$SCRIPT" "$UPLOAD_DIR" "./llama.cpp" "readme-only"
+    mkdir -p "$UPLOAD_DIR"
+    cp "$README" "$UPLOAD_DIR/"
     pip install -r requirements.txt
     hf repos create "$DST" --type model --exist-ok --token "$HF_TOKEN"
     hf upload "$DST" "$UPLOAD_DIR" --include "README.md" --type model --token "$HF_TOKEN"
@@ -114,12 +123,7 @@ for (( i=0; i<NUM_MODELS; i++ )); do
   done <<< "$PRODUCED_FILES"
 
   hf upload "$DST" "$UPLOAD_DIR" \
-    $GGUF_FLAGS \
-    --type model \
-    --token "$HF_TOKEN"
-
-  hf upload "$DST" "$UPLOAD_DIR" \
-    --include ".src_sha" --include "README.md" \
+    $GGUF_FLAGS --include ".src_sha" --include "README.md" \
     --type model \
     --token "$HF_TOKEN"
 

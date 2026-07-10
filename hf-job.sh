@@ -17,6 +17,7 @@ hf jobs run \
     # Install system dependencies
     apt-get update && apt-get install -y --no-install-recommends \
       build-essential \
+      curl \
       git \
       cmake \
       && rm -rf /var/lib/apt/lists/*

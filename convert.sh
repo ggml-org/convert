@@ -123,8 +123,8 @@ for config_path in "${config_paths[@]}"; do
         rm -rf "$upload_dir"
         mkdir -p "$upload_dir"
         cp "$script_dir/README.md" "$upload_dir/"
-        hf repos create "$dest" --type model --exist-ok"
-        hf upload "$dest" "$upload_dir" --include "README.md" --type model"
+        hf repos create "$dest" --type model --exist-ok
+        hf upload "$dest" "$upload_dir" --include "README.md" --type model
         rm -rf "$upload_dir"
         continue
     fi

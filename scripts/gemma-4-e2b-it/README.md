@@ -1,0 +1,16 @@
+---
+license: other
+tags:
+- gguf
+- quantized
+base_model:
+- google/gemma-4-E2B-it
+---
+
+# gemma-4-E2B-it
+
+Source repos:
+- https://huggingface.co/google/gemma-4-E2B-it
+- https://huggingface.co/google/gemma-4-E2B-it-assistant
+
+TODO: add info

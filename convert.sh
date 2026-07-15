@@ -6,10 +6,15 @@ cd "$SCRIPT_DIR"
 
 # Parse arguments
 ONE_MODEL=""
+FILTER_REGEX=""
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --one)
             ONE_MODEL="$2"
+            shift 2
+            ;;
+        --filter)
+            FILTER_REGEX="$2"
             shift 2
             ;;
         *)
@@ -18,6 +23,11 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
+
+if [ -n "$ONE_MODEL" ] && [ -n "$FILTER_REGEX" ]; then
+    echo "Error: --one and --filter are mutually exclusive"
+    exit 1
+fi
 
 if [ -z "${HF_TOKEN:-}" ]; then
     echo "Error: HF_TOKEN environment variable is not set"
@@ -56,6 +66,18 @@ if [ -n "$ONE_MODEL" ]; then
     config_paths=("scripts/${ONE_MODEL}/config.sh")
     if [ ! -f "${config_paths[0]}" ]; then
         echo "Error: No config.sh found for model '$ONE_MODEL'"
+        exit 1
+    fi
+elif [ -n "$FILTER_REGEX" ]; then
+    config_paths=()
+    for candidate in scripts/*/config.sh; do
+        dir=$(basename "$(dirname "$candidate")")
+        if echo "$dir" | grep -qE "$FILTER_REGEX"; then
+            config_paths+=("$candidate")
+        fi
+    done
+    if [ ${#config_paths[@]} -eq 0 ]; then
+        echo "Error: No models matched filter '$FILTER_REGEX'"
         exit 1
     fi
 else

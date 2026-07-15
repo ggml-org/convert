@@ -44,6 +44,29 @@ if [ -z "${HF_TOKEN:-}" ]; then
     exit 1
 fi
 
+# Build list of configs to process (early validation before expensive setup)
+if [ -n "$ONE_MODEL" ]; then
+    config_paths=("scripts/${ONE_MODEL}/config.sh")
+    if [ ! -f "${config_paths[0]}" ]; then
+        echo "Error: No config.sh found for model '$ONE_MODEL'"
+        exit 1
+    fi
+elif [ -n "$FILTER_REGEX" ]; then
+    config_paths=()
+    for candidate in scripts/*/config.sh; do
+        dir=$(basename "$(dirname "$candidate")")
+        if echo "$dir" | grep -qE "$FILTER_REGEX"; then
+            config_paths+=("$candidate")
+        fi
+    done
+    if [ ${#config_paths[@]} -eq 0 ]; then
+        echo "Error: No models matched filter '$FILTER_REGEX'"
+        exit 1
+    fi
+else
+    config_paths=(scripts/*/config.sh)
+fi
+
 # Cross-platform CPU count
 if command -v nproc &>/dev/null; then
     CPU_COUNT=$(nproc)
@@ -70,29 +93,6 @@ cd ../..
 
 echo ">>> Installing HF CLI"
 pip install -r requirements.txt
-
-# Build list of configs to process
-if [ -n "$ONE_MODEL" ]; then
-    config_paths=("scripts/${ONE_MODEL}/config.sh")
-    if [ ! -f "${config_paths[0]}" ]; then
-        echo "Error: No config.sh found for model '$ONE_MODEL'"
-        exit 1
-    fi
-elif [ -n "$FILTER_REGEX" ]; then
-    config_paths=()
-    for candidate in scripts/*/config.sh; do
-        dir=$(basename "$(dirname "$candidate")")
-        if echo "$dir" | grep -qE "$FILTER_REGEX"; then
-            config_paths+=("$candidate")
-        fi
-    done
-    if [ ${#config_paths[@]} -eq 0 ]; then
-        echo "Error: No models matched filter '$FILTER_REGEX'"
-        exit 1
-    fi
-else
-    config_paths=(scripts/*/config.sh)
-fi
 
 # Iterate over selected config(s)
 for config_path in "${config_paths[@]}"; do

@@ -171,7 +171,13 @@ for config_path in "${config_paths[@]}"; do
 
     echo ">>> Running conversion script: $script_dir/convert.sh"
     bash "$script_dir/convert.sh" "$upload_dir" "./llama.cpp" 2>&1 | tee "$upload_dir/convert.log"
-    produced_files=$(grep '^[^/]*\.gguf$' "$upload_dir/convert.log")
+
+    # Read produced files from manifest
+    if [ ! -f "$upload_dir/.produced_files" ]; then
+        echo "Error: Conversion did not produce .produced_files manifest"
+        exit 1
+    fi
+    produced_files=$(cat "$upload_dir/.produced_files")
 
     # Write .src_sha with all dependency SHAs
     printf "%s" "$current_sha_lines" > "$upload_dir/.src_sha"

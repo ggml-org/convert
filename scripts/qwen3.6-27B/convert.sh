@@ -52,15 +52,15 @@ fi
 
 # --- Produced files ---
 
-echo "${DISPLAY_NAME}-BF16.gguf"
-echo "${DISPLAY_NAME}-Q8_0.gguf"
-echo "${DISPLAY_NAME}-Q4_K_M.gguf"
-echo "mmproj-${DISPLAY_NAME}-BF16.gguf"
-echo "mmproj-${DISPLAY_NAME}-Q8_0.gguf"
-echo "mtp-${DISPLAY_NAME}-BF16.gguf"
-echo "mtp-${DISPLAY_NAME}-Q8_0.gguf"
-echo "mtp-${DISPLAY_NAME}-Q4_0.gguf"
+echo "${DISPLAY_NAME}-BF16.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "${DISPLAY_NAME}-Q8_0.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "${DISPLAY_NAME}-Q4_K_M.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "mmproj-${DISPLAY_NAME}-BF16.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "mmproj-${DISPLAY_NAME}-Q8_0.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "mtp-${DISPLAY_NAME}-BF16.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "mtp-${DISPLAY_NAME}-Q8_0.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "mtp-${DISPLAY_NAME}-Q4_0.gguf" >> "$OUTPUT_DIR/.produced_files"
 if [ -n "${PATH_DFLASH:-}" ] && [ -d "$PATH_DFLASH" ]; then
-    echo "dflash-${DISPLAY_NAME}-BF16.gguf"
-    echo "dflash-${DISPLAY_NAME}-Q8_0.gguf"
+    echo "dflash-${DISPLAY_NAME}-BF16.gguf" >> "$OUTPUT_DIR/.produced_files"
+    echo "dflash-${DISPLAY_NAME}-Q8_0.gguf" >> "$OUTPUT_DIR/.produced_files"
 fi

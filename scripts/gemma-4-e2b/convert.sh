@@ -18,5 +18,5 @@ python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" \
 
 # --- Produced files ---
 
-echo "${DISPLAY_NAME}-BF16.gguf"
-echo "${DISPLAY_NAME}-Q8_0.gguf"
+echo "${DISPLAY_NAME}-BF16.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "${DISPLAY_NAME}-Q8_0.gguf" >> "$OUTPUT_DIR/.produced_files"

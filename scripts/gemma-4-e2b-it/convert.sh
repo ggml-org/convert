@@ -37,9 +37,9 @@ python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_QAT_Q4_0_TARGET" \
 
 # --- Produced files ---
 
-echo "${DISPLAY_NAME}-BF16.gguf"
-echo "${DISPLAY_NAME}-Q8_0.gguf"
-echo "mtp-${DISPLAY_NAME}-BF16.gguf"
-echo "mtp-${DISPLAY_NAME}-Q8_0.gguf"
-echo "mtp-${DISPLAY_NAME}-Q4_0.gguf"
-echo "${DISPLAY_NAME}-Q4_0.gguf"
+echo "${DISPLAY_NAME}-BF16.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "${DISPLAY_NAME}-Q8_0.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "mtp-${DISPLAY_NAME}-BF16.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "mtp-${DISPLAY_NAME}-Q8_0.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "mtp-${DISPLAY_NAME}-Q4_0.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "${DISPLAY_NAME}-Q4_0.gguf" >> "$OUTPUT_DIR/.produced_files"

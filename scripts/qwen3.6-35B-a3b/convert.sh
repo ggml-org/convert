@@ -30,6 +30,7 @@ fi
 
 # --- Quantizations ---
 
+# TODO: use --pure when ready
 FLAGS_Q4_K_M="--tensor-type shexp=q8_0 --tensor-type latent=q8_0 --tensor-type attn_=q8_0 --tensor-type ffn_=q4_k --tensor-type ssm_=q8_0 --tensor-type down_exps=q8_0"
 
 # Main model: Q8_0, Q4_K_M

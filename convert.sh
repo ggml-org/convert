@@ -44,6 +44,12 @@ if [ -z "${HF_TOKEN:-}" ]; then
     exit 1
 fi
 
+# Check HF_TOKEN has write access to owner
+if ! hf repos create "${OWNER}/__test-permissions" --type model --exist-ok 2>/dev/null; then
+    echo "Error: HF_TOKEN does not have write access to '$OWNER'"
+    exit 1
+fi
+
 # Build list of configs to process (early validation before expensive setup)
 if [ -n "$ONE_MODEL" ]; then
     config_paths=("scripts/${ONE_MODEL}/config.sh")

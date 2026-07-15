@@ -11,6 +11,5 @@ base_model:
 
 Source repos:
 - https://huggingface.co/openai/gpt-oss-20b
-- https://huggingface.co/RedHatAI/gpt-oss-20b-speculator.eagle3
 
 TODO: add info

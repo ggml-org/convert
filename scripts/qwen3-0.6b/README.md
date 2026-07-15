@@ -12,4 +12,6 @@ base_model:
 Source repos:
 - https://huggingface.co/Qwen/Qwen3-0.6B
 
-TODO: add info
+### TODOs
+
+- add info

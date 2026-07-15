@@ -12,4 +12,7 @@ base_model:
 Source repos:
 - https://huggingface.co/openai/gpt-oss-120b
 
-TODO: add info
+### TODOs
+
+- add info
+- add eagle3

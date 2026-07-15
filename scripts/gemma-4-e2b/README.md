@@ -12,4 +12,6 @@ base_model:
 Source repo:
 - https://huggingface.co/google/gemma-4-E2B
 
-TODO: add info
+### TODOs
+
+- add info

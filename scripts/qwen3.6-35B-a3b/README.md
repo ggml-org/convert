@@ -13,4 +13,6 @@ Source repos:
 - https://huggingface.co/Qwen/Qwen3.6-35B-A3B
 - https://huggingface.co/z-lab/Qwen3.6-35B-A3B-DFlash
 
-TODO: add info
+### TODOs
+
+- add info

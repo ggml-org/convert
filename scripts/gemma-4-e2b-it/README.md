@@ -15,4 +15,7 @@ Source repos:
 - https://huggingface.co/google/gemma-4-E2B-it-qat-q4_0-unquantized-assistant
 - https://huggingface.co/google/gemma-4-E2B-it-qat-q4_0-unquantized
 
-TODO: add info
+### TODOs
+
+- add info
+- add dflash

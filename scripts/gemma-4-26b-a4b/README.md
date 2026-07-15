@@ -12,4 +12,6 @@ base_model:
 Source repos:
 - https://huggingface.co/google/gemma-4-26B-A4B
 
-TODO: add info
+### TODOs
+
+- add info

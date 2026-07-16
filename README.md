@@ -17,6 +17,9 @@ HF_TOKEN=xxx bash convert.sh --owner <org> --one gemma-4-12b
 
 # Convert models matching a filter
 HF_TOKEN=xxx bash convert.sh --owner <org> --filter '^gemma'
+
+# Run via HF Jobs (cloud infrastructure)
+HF_TOKEN=xxx bash hf-job.sh --owner <org>
 ```
 
 ## Notes

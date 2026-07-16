@@ -35,6 +35,12 @@ python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_QAT_Q4_0_UNQUANTIZED" \
     --outtype bf16 --outfile "$OUTPUT_DIR/${DISPLAY_NAME}-QAT-BF16.gguf" --model-name "$DISPLAY_NAME"
 "$QUANTIZE" --pure --tensor-type "^token_embd=q8_0" "$OUTPUT_DIR/${DISPLAY_NAME}-QAT-BF16.gguf" "$OUTPUT_DIR/${DISPLAY_NAME}-Q4_0.gguf" Q4_0 1>&2
 
+# DFlash
+python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_DFLASH" \
+    --outtype bf16 --target-model "$PATH_PRIMARY" \
+    --outfile "$OUTPUT_DIR/dflash-${DISPLAY_NAME}-BF16.gguf" --model-name "$DISPLAY_NAME"
+"$QUANTIZE" "$OUTPUT_DIR/dflash-${DISPLAY_NAME}-BF16.gguf" "$OUTPUT_DIR/dflash-${DISPLAY_NAME}-Q8_0.gguf" Q8_0 1>&2
+
 # --- Produced files ---
 
 echo "${DISPLAY_NAME}-BF16.gguf" >> "$OUTPUT_DIR/.produced_files"
@@ -43,3 +49,5 @@ echo "mtp-${DISPLAY_NAME}-BF16.gguf" >> "$OUTPUT_DIR/.produced_files"
 echo "mtp-${DISPLAY_NAME}-Q8_0.gguf" >> "$OUTPUT_DIR/.produced_files"
 echo "mtp-${DISPLAY_NAME}-Q4_0.gguf" >> "$OUTPUT_DIR/.produced_files"
 echo "${DISPLAY_NAME}-Q4_0.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "dflash-${DISPLAY_NAME}-BF16.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "dflash-${DISPLAY_NAME}-Q8_0.gguf" >> "$OUTPUT_DIR/.produced_files"

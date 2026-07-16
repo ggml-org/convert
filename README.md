@@ -8,18 +8,20 @@ Supported models: [models/](models/)
 
 ## Usage
 
+Requires `HF_TOKEN` with write permission to the target org.
+
 ```bash
 # Convert all models
-HF_TOKEN=xxx bash convert.sh --owner <org>
+bash convert.sh --owner <org>
 
 # Convert a single model
-HF_TOKEN=xxx bash convert.sh --owner <org> --one gemma-4-12b
+bash convert.sh --owner <org> --one gemma-4-12b
 
 # Convert models matching a filter
-HF_TOKEN=xxx bash convert.sh --owner <org> --filter '^gemma'
+bash convert.sh --owner <org> --filter '^gemma'
 
 # Run via HF Jobs (cloud infrastructure)
-HF_TOKEN=xxx bash hf-job.sh --owner <org>
+bash hf-job.sh --owner <org>
 ```
 
 ## Notes

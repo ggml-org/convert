@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: "0 0 * * 0" # Every Sunday at midnight
   workflow_dispatch:
+    inputs:
+      filter:
+        description: "Model filter (regex)"
+        required: false
+        default: ""
 
 jobs:
   convert:
@@ -24,4 +29,9 @@ jobs:
       - name: Launch HF Job
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN_CONVERT }}
-        run: bash hf-job.sh --owner ggml-org --one qwen3-0.6b-base
+        run: |
+          FILTER_ARGS=""
+          if [ -n "${{ github.event.inputs.filter }}" ]; then
+            FILTER_ARGS="--filter ${{ github.event.inputs.filter }}"
+          fi
+          bash hf-job.sh --owner ggml-org $FILTER_ARGS

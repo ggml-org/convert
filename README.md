@@ -1,5 +1,7 @@
 # convert
 
+[![Model Conversion](https://github.com/ggml-org/convert/actions/workflows/main.yml/badge.svg)](https://github.com/ggml-org/convert/actions/workflows/main.yml)
+
 Automated pipeline for converting models to GGUF format and uploading them to HF.
 
 Supported models: [models/](models/)

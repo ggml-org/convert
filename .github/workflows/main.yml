@@ -9,6 +9,11 @@ on:
         description: "Model filter (regex)"
         required: false
         default: ""
+      force:
+        description: "Force re-convert (ignore SHA checks)"
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   convert:
@@ -34,4 +39,8 @@ jobs:
           if [ -n "${{ github.event.inputs.filter }}" ]; then
             FILTER_ARGS="--filter ${{ github.event.inputs.filter }}"
           fi
-          bash hf-job.sh --owner ggml-org $FILTER_ARGS
+          FORCE_ARGS=""
+          if [ "${{ github.event.inputs.force }}" = "true" ]; then
+            FORCE_ARGS="--force"
+          fi
+          bash hf-job.sh --owner ggml-org $FILTER_ARGS $FORCE_ARGS

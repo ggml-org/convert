@@ -24,6 +24,10 @@ while [[ $# -gt 0 ]]; do
             CONVERT_ARGS="$CONVERT_ARGS --filter $2"
             shift 2
             ;;
+        --force)
+            CONVERT_ARGS="$CONVERT_ARGS --force"
+            shift
+            ;;
         --timeout)
             TIMEOUT="$2"
             shift 2

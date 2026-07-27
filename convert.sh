@@ -8,6 +8,7 @@ cd "$SCRIPT_DIR"
 OWNER=""
 ONE_MODEL=""
 FILTER_REGEX=""
+FORCE=false
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --owner)
@@ -21,6 +22,10 @@ while [[ $# -gt 0 ]]; do
         --filter)
             FILTER_REGEX="$2"
             shift 2
+            ;;
+        --force)
+            FORCE=true
+            shift
             ;;
         *)
             echo "Unknown argument: $1"
@@ -142,21 +147,26 @@ for config_path in "${config_paths[@]}"; do
         current_sha_lines+="${key}=${sha}"$'\n'
     done
 
-    # Read last-processed SHAs from destination repo
-    last_sha_file=$(curl -Ls "https://huggingface.co/$dest/resolve/main/.src_sha" 2>/dev/null || echo "")
+    if [ "$FORCE" = true ]; then
+        echo ">>> --force flag set: skipping SHA checks, converting anyway"
+        needs_convert=true
+    else
+        # Read last-processed SHAs from destination repo
+        last_sha_file=$(curl -Ls "https://huggingface.co/$dest/resolve/main/.src_sha" 2>/dev/null || echo "")
 
-    # Compare — re-convert if ANY dependency changed
-    needs_convert=false
-    for key in $dep_keys; do
-        current=$(echo "$current_sha_lines" | grep "^${key}=" | cut -d= -f2-)
-        last=$(echo "$last_sha_file" | grep "^${key}=" | cut -d= -f2- 2>/dev/null || echo "")
+        # Compare — re-convert if ANY dependency changed
+        needs_convert=false
+        for key in $dep_keys; do
+            current=$(echo "$current_sha_lines" | grep "^${key}=" | cut -d= -f2-)
+            last=$(echo "$last_sha_file" | grep "^${key}=" | cut -d= -f2- 2>/dev/null || echo "")
 
-        if [ "$current" != "$last" ]; then
-            echo ">>> $key changed (current: ${current:0:8}…, last: ${last:0:8}…)"
-            needs_convert=true
-            break
-        fi
-    done
+            if [ "$current" != "$last" ]; then
+                echo ">>> $key changed (current: ${current:0:8}…, last: ${last:0:8}…)"
+                needs_convert=true
+                break
+            fi
+        done
+    fi
 
     if [ "$needs_convert" = false ]; then
         echo ">>> No dependency changes detected. Uploading README only."

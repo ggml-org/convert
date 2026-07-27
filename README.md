@@ -26,6 +26,9 @@ bash convert.sh --owner <org> --one gemma-4-12b
 # Convert models matching a filter
 bash convert.sh --owner <org> --filter '^gemma'
 
+# Force re-convert (ignore SHA checks)
+bash convert.sh --owner <org> --force
+
 # Run via HF Jobs (cloud infrastructure)
 bash hf-job.sh --owner <org>
 ```

@@ -2,12 +2,13 @@
 set -euo pipefail
 
 # Hugging Face Job to run convert.sh on HF infrastructure
-# Usage: ./hf-job.sh --owner <owner> [--one <name>] [--filter <regex>] [--timeout <seconds>]
+# Usage: ./hf-job.sh --owner <owner> [--one <name>] [--filter <regex>] [--branch <name>] [--timeout <seconds>]
 
 echo ">>> Starting HF Job: Model Convert & Quantize"
 
 # Collect arguments to pass to convert.sh
 OWNER=""
+BRANCH=""
 TIMEOUT="1h"
 CONVERT_ARGS=""
 while [[ $# -gt 0 ]]; do
@@ -22,6 +23,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --filter)
             CONVERT_ARGS="$CONVERT_ARGS --filter $2"
+            shift 2
+            ;;
+        --branch)
+            BRANCH="$2"
             shift 2
             ;;
         --force)
@@ -44,6 +49,11 @@ if [ -z "$OWNER" ]; then
     exit 1
 fi
 
+CHECKOUT_CMD=""
+if [ -n "$BRANCH" ]; then
+    CHECKOUT_CMD="git checkout $BRANCH"
+fi
+
 hf jobs run \
     --namespace "$OWNER" \
     --timeout "$TIMEOUT" \
@@ -64,6 +74,8 @@ hf jobs run \
     # Clone the conversion scripts
     git clone https://github.com/ggml-org/convert.git /tmp/convert
     cd /tmp/convert
+
+    '"$CHECKOUT_CMD"'
 
     # Run the conversion script
     bash convert.sh --owner '"$OWNER"' '"$CONVERT_ARGS"'

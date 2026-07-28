@@ -1,0 +1,4 @@
+DISPLAY_NAME="Qwen3-8B"
+DEST_REPO="Qwen3-8B-GGUF"
+DEP_PRIMARY="Qwen/Qwen3-8B"
+DEP_DFLASH="z-lab/Qwen3-8B-DFlash-b16"

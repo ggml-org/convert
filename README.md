@@ -31,6 +31,9 @@ bash convert.sh --owner <org> --force
 
 # Run via HF Jobs (cloud infrastructure)
 bash hf-job.sh --owner <org>
+
+# Run via HF Jobs with a custom hardware flavor
+bash hf-job.sh --owner <org> --hardware cpu-basic
 ```
 
 ## Notes

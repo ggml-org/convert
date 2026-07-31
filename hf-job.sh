@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Hugging Face Job to run convert.sh on HF infrastructure
-# Usage: ./hf-job.sh --owner <owner> [--one <name>] [--filter <regex>] [--branch <name>] [--timeout <seconds>]
+# Usage: ./hf-job.sh --owner <owner> [--one <name>] [--filter <regex>] [--branch <name>] [--timeout <seconds>] [--hardware <flavor>]
 
 echo ">>> Starting HF Job: Model Convert & Quantize"
 
@@ -10,6 +10,7 @@ echo ">>> Starting HF Job: Model Convert & Quantize"
 OWNER=""
 BRANCH=""
 TIMEOUT="1h"
+HARDWARE="cpu-xl"
 CONVERT_ARGS=""
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -37,7 +38,11 @@ while [[ $# -gt 0 ]]; do
             TIMEOUT="$2"
             shift 2
             ;;
-        *)
+        --hardware)
+            HARDWARE="$2"
+            shift 2
+            ;;
+        *;
             echo "Unknown argument: $1"
             exit 1
             ;;
@@ -57,7 +62,7 @@ fi
 hf jobs run \
     --namespace "$OWNER" \
     --timeout "$TIMEOUT" \
-    --flavor cpu-xl \
+    --flavor "$HARDWARE" \
     --secrets HF_TOKEN \
     --env HF_HUB_ENABLE_HF_XET=1 \
     python:3.11-slim \

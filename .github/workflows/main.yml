@@ -14,6 +14,10 @@ on:
         required: false
         default: false
         type: boolean
+      hardware:
+        description: "HF Jobs flavor (e.g. cpu-xl, cpu-basic, gpu-small)"
+        required: false
+        default: "cpu-xl"
 
 jobs:
   convert:
@@ -44,4 +48,5 @@ jobs:
             FORCE_ARGS="--force"
           fi
           BRANCH_ARGS="--branch ${{ github.ref_name }}"
-          bash hf-job.sh --owner ggml-org $FILTER_ARGS $FORCE_ARGS $BRANCH_ARGS
+          HARDWARE_ARGS="--hardware ${{ github.event.inputs.hardware }}"
+          bash hf-job.sh --owner ggml-org $FILTER_ARGS $FORCE_ARGS $BRANCH_ARGS $HARDWARE_ARGS

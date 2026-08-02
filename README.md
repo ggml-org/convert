@@ -50,4 +50,4 @@ bash hf-job.sh --owner <org> --hardware cpu-basic
   ```
 
 - A maintainer from the [ggml-org/hf](https://github.com/orgs/ggml-org/teams/hf) team can start the workflow manually from the [Actions pane](https://github.com/ggml-org/convert/actions/workflows/main.yml)
-- The conversion uses the latest `master` of [llama.cpp](https://github.com/ggml-org/llama.cpp) by default; use `--llama-commit` to pin a specific commit
+- The conversion uses the latest `master` of [llama.cpp](https://github.com/ggml-org/llama.cpp) unless `--llama-commit` is set

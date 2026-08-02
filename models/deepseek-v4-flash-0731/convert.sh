@@ -15,7 +15,7 @@ python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" \
 
 # DSpark sidecar: BF16
 python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" \
-    --outtype bf16 --outfile "$OUTPUT_DIR/dspark-${DISPLAY_NAME}-BF16.gguf" --dspark --model-name "$DISPLAY_NAME"
+    --outtype bf16 --outfile "$OUTPUT_DIR/dspark-${DISPLAY_NAME}-BF16.gguf" --dspark --target-model-dir "$PATH_PRIMARY" --model-name "$DISPLAY_NAME"
 
 # --- Quantizations ---
 

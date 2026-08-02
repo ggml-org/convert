@@ -13,20 +13,11 @@ QUANTIZE="$LLAMA_CPP/build/bin/llama-quantize"
 python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" \
     --outtype bf16 --outfile "$OUTPUT_DIR/${DISPLAY_NAME}-BF16.gguf" --no-mtp --model-name "$DISPLAY_NAME"
 
-# MTP sidecar: BF16 (uses DeepSeek-V4-Flash as source)
-python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_MTP" \
-    --outtype bf16 --outfile "$OUTPUT_DIR/mtp-${DISPLAY_NAME}-BF16.gguf" --mtp --model-name "$DISPLAY_NAME"
-
 # --- Quantizations ---
 
 # Main model: MXFP4_MOE
 "$QUANTIZE" "$OUTPUT_DIR/${DISPLAY_NAME}-BF16.gguf" "$OUTPUT_DIR/${DISPLAY_NAME}-MXFP4.gguf" MXFP4_MOE 1>&2
 
-# MTP sidecar: MXFP4
-"$QUANTIZE" "$OUTPUT_DIR/mtp-${DISPLAY_NAME}-BF16.gguf" "$OUTPUT_DIR/mtp-${DISPLAY_NAME}-MXFP4.gguf" MXFP4 1>&2
-
 # --- Produced files ---
 
 echo "${DISPLAY_NAME}-MXFP4.gguf" >> "$OUTPUT_DIR/.produced_files"
-echo "mtp-${DISPLAY_NAME}-BF16.gguf" >> "$OUTPUT_DIR/.produced_files"
-echo "mtp-${DISPLAY_NAME}-MXFP4.gguf" >> "$OUTPUT_DIR/.produced_files"

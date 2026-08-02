@@ -11,7 +11,7 @@ QUANTIZE="$LLAMA_CPP/build/bin/llama-quantize"
 
 # Main model: BF16 (intermediate for quantization only)
 python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" \
-    --outtype bf16 --outfile "$OUTPUT_DIR/${DISPLAY_NAME}-BF16.gguf" --model-name "$DISPLAY_NAME"
+    --outtype bf16 --outfile "$OUTPUT_DIR/${DISPLAY_NAME}-BF16.gguf" --no-mtp --model-name "$DISPLAY_NAME"
 
 # --- Quantizations ---
 

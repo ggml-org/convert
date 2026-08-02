@@ -9,6 +9,7 @@ OWNER=""
 ONE_MODEL=""
 FILTER_REGEX=""
 FORCE=false
+LLAMA_COMMIT=""
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --owner)
@@ -26,6 +27,10 @@ while [[ $# -gt 0 ]]; do
         --force)
             FORCE=true
             shift
+            ;;
+        --llama-commit)
+            LLAMA_COMMIT="$2"
+            shift 2
             ;;
         *)
             echo "Unknown argument: $1"
@@ -94,10 +99,19 @@ fi
 
 echo ">>> Preparing llama.cpp"
 if [ -d "llama.cpp" ]; then
-    echo ">>> llama.cpp already exists, pulling latest master"
-    cd llama.cpp && git checkout master && git pull && cd ..
+    echo ">>> llama.cpp already exists"
+    if [ -n "$LLAMA_COMMIT" ]; then
+        cd llama.cpp && git fetch --unshallow 2>/dev/null || git fetch --all && git checkout "$LLAMA_COMMIT" && cd ..
+    else
+        cd llama.cpp && git checkout master && git pull && cd ..
+    fi
 else
-    git clone --depth 1 https://github.com/ggml-org/llama.cpp.git
+    if [ -n "$LLAMA_COMMIT" ]; then
+        git clone https://github.com/ggml-org/llama.cpp.git
+        cd llama.cpp && git checkout "$LLAMA_COMMIT" && cd ..
+    else
+        git clone --depth 1 https://github.com/ggml-org/llama.cpp.git
+    fi
 fi
 
 echo ">>> Building llama-quantize"

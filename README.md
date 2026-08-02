@@ -29,6 +29,9 @@ bash convert.sh --owner <org> --filter '^gemma'
 # Force re-convert (ignore SHA checks)
 bash convert.sh --owner <org> --force
 
+# Use a specific llama.cpp commit
+bash convert.sh --owner <org> --llama-commit <commit>
+
 # Run via HF Jobs (cloud infrastructure)
 bash hf-job.sh --owner <org>
 
@@ -47,4 +50,4 @@ bash hf-job.sh --owner <org> --hardware cpu-basic
   ```
 
 - A maintainer from the [ggml-org/hf](https://github.com/orgs/ggml-org/teams/hf) team can start the workflow manually from the [Actions pane](https://github.com/ggml-org/convert/actions/workflows/main.yml)
-- The conversion uses the latest version of [llama.cpp](https://github.com/ggml-org/llama.cpp)
+- The conversion uses the latest `master` of [llama.cpp](https://github.com/ggml-org/llama.cpp) by default; use `--llama-commit` to pin a specific commit

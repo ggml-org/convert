@@ -18,6 +18,10 @@ on:
         description: "HF Jobs flavor"
         required: false
         default: ""
+      llama_commit:
+        description: "llama.cpp commit to checkout"
+        required: false
+        default: ""
 
 jobs:
   convert:
@@ -51,5 +55,9 @@ jobs:
           if [ -n "${{ github.event.inputs.hardware }}" ]; then
             HARDWARE_ARGS="--hardware ${{ github.event.inputs.hardware }}"
           fi
+          LLAMA_COMMIT_ARGS=""
+          if [ -n "${{ github.event.inputs.llama_commit }}" ]; then
+            LLAMA_COMMIT_ARGS="--llama-commit ${{ github.event.inputs.llama_commit }}"
+          fi
           BRANCH_ARGS="--branch ${{ github.ref_name }}"
-          bash hf-job.sh --owner ggml-org $FILTER_ARGS $FORCE_ARGS $HARDWARE_ARGS $BRANCH_ARGS
+          bash hf-job.sh --owner ggml-org $FILTER_ARGS $FORCE_ARGS $HARDWARE_ARGS $LLAMA_COMMIT_ARGS $BRANCH_ARGS

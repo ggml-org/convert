@@ -42,6 +42,10 @@ while [[ $# -gt 0 ]]; do
             HARDWARE="$2"
             shift 2
             ;;
+        --llama-commit)
+            CONVERT_ARGS="$CONVERT_ARGS --llama-commit $2"
+            shift 2
+            ;;
         *)
             echo "Unknown argument: $1"
             exit 1

@@ -19,5 +19,9 @@ llama serve -hf __owner__/Laguna-S-2.1-GGUF
 ### Source models
 - https://huggingface.co/poolside/Laguna-S-2.1
 
+### TODOs
+
+- add DFlash
+
 > [!IMPORTANT]
 > This model is automatically converted using https://github.com/ggml-org/convert

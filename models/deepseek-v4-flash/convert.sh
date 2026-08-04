@@ -64,6 +64,7 @@ FLAGS_Q2_K_S="--pure \
 
 FLAGS_MXFP4="\
     --tensor-type ffn_gate_inp=q8_0 \
+    --tensor-type conf_proj=q8_0 \
 "
 
 # MTP sidecar: MXFP4

@@ -20,7 +20,6 @@ python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" \
 # --- Quantizations ---
 
 FLAGS_MXFP4="\
-    --tensor-type ffn_gate_inp=q8_0 \
 "
 
 # Main model: MXFP4_MOE
@@ -35,7 +34,6 @@ FLAGS_Q2_K="--pure \
     --tensor-type hc_ffn=q8_0 \
     --tensor-type indexer=q8_0 \
     --tensor-type output_hc=q8_0 \
-    --tensor-type ffn_gate_inp=q8_0 \
     --tensor-type ffn_down_exps=mxfp4 \
     --tensor-type ffn_gate_exps=q2_k \
     --tensor-type ffn_up_exps=q2_k \
@@ -53,7 +51,6 @@ FLAGS_Q2_K_S="--pure \
     --tensor-type hc_ffn=q8_0 \
     --tensor-type indexer=q8_0 \
     --tensor-type output_hc=q8_0 \
-    --tensor-type ffn_gate_inp=q8_0 \
     --tensor-type ffn_down_exps=q2_k \
     --tensor-type ffn_gate_exps=q2_k \
     --tensor-type ffn_up_exps=q2_k \
@@ -63,8 +60,6 @@ FLAGS_Q2_K_S="--pure \
 "$QUANTIZE" --keep-split --allow-requantize $FLAGS_Q2_K_S "$OUTPUT_DIR/${DISPLAY_NAME}-BF16-00001-of-00002.gguf" "$OUTPUT_DIR/${DISPLAY_NAME}-Q2_K_S.gguf" MXFP4_MOE 1>&2
 
 FLAGS_MXFP4="\
-    --tensor-type ffn_gate_inp=q8_0 \
-    --tensor-type conf_proj=q8_0 \
 "
 
 # MTP sidecar: MXFP4

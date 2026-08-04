@@ -22,6 +22,10 @@ on:
         description: "llama.cpp commit to checkout"
         required: false
         default: ""
+      timeout:
+        description: "HF Job timeout (e.g. 2h, 30m)"
+        required: false
+        default: ""
 
 jobs:
   convert:
@@ -59,5 +63,9 @@ jobs:
           if [ -n "${{ github.event.inputs.llama_commit }}" ]; then
             LLAMA_COMMIT_ARGS="--llama-commit ${{ github.event.inputs.llama_commit }}"
           fi
+          TIMEOUT_ARGS=""
+          if [ -n "${{ github.event.inputs.timeout }}" ]; then
+            TIMEOUT_ARGS="--timeout ${{ github.event.inputs.timeout }}"
+          fi
           BRANCH_ARGS="--branch ${{ github.ref_name }}"
-          bash hf-job.sh --owner ggml-org $FILTER_ARGS $FORCE_ARGS $HARDWARE_ARGS $LLAMA_COMMIT_ARGS $BRANCH_ARGS
+          bash hf-job.sh --owner ggml-org $FILTER_ARGS $FORCE_ARGS $HARDWARE_ARGS $LLAMA_COMMIT_ARGS $TIMEOUT_ARGS $BRANCH_ARGS

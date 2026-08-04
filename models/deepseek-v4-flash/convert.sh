@@ -22,7 +22,17 @@ python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" \
 # Main model: MXFP4_MOE
 "$QUANTIZE" --keep-split "$OUTPUT_DIR/${DISPLAY_NAME}-BF16-00001-of-00002.gguf" "$OUTPUT_DIR/${DISPLAY_NAME}-MXFP4.gguf" MXFP4_MOE 1>&2
 
-FLAGS_Q2_K="--pure --tensor-type output.weight=q6_k --tensor-type attn_=q8_0 --tensor-type shexp=q8_0 --tensor-type ffn_down_exps=mxfp4 --tensor-type ffn_gate_exps=q2_k --tensor-type ffn_up_exps=q2_k"
+FLAGS_Q2_K="--pure \
+    --tensor-type output.weight=q6_k \
+    --tensor-type attn_=q8_0 \
+    --tensor-type shexp=q8_0 \
+    --tensor-type hc_attn=q8_0 \
+    --tensor-type hc_ffn=q8_0 \
+    --tensor-type output_hc=q8_0 \
+    --tensor-type ffn_down_exps=mxfp4 \
+    --tensor-type ffn_gate_exps=q2_k \
+    --tensor-type ffn_up_exps=q2_k \
+"
 
 # Main model: MXFP4_MOE + Q2_K overrides
 "$QUANTIZE" --keep-split --allow-requantize $FLAGS_Q2_K "$OUTPUT_DIR/${DISPLAY_NAME}-BF16-00001-of-00002.gguf" "$OUTPUT_DIR/${DISPLAY_NAME}-Q2_K.gguf" MXFP4_MOE 1>&2

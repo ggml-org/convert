@@ -9,7 +9,7 @@ on:
         description: "Force re-convert (ignore SHA checks)"
         required: false
         default: false
-        type: boolean    
+        type: boolean
       filter:
         description: "Model filter (regex)"
         required: false

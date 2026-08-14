@@ -34,11 +34,17 @@ python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" \
 
 # --- Quantizations ---
 
-FLAGS_Q4_K_M="--pure --tensor-type output.weight=q6_k --tensor-type shexp=q8_0 --tensor-type latent=q8_0 --tensor-type attn_=q8_0 --tensor-type ssm_=q8_0"
+FLAGS_Q4_0="--pure \
+    --tensor-type token_embd.weight=q8_0 \
+    --tensor-type ^output.weight=q6_k \
+    --tensor-type shexp=q8_0 \
+    --tensor-type attn_=q8_0 \
+    --tensor-type ssm_=q8_0 \
+    "
 
-# Main model: Q8_0, Q4_K_M
+# Main model: Q8_0, Q4_0
 "$QUANTIZE"               "$OUTPUT_DIR/${DISPLAY_NAME}-BF16.gguf" "$OUTPUT_DIR/${DISPLAY_NAME}-Q8_0.gguf" Q8_0 1>&2
-"$QUANTIZE" $FLAGS_Q4_K_M "$OUTPUT_DIR/${DISPLAY_NAME}-BF16.gguf" "$OUTPUT_DIR/${DISPLAY_NAME}-Q4_K_M.gguf" Q4_K_M 1>&2
+"$QUANTIZE" $FLAGS_Q4_0 "$OUTPUT_DIR/${DISPLAY_NAME}-BF16.gguf" "$OUTPUT_DIR/${DISPLAY_NAME}-Q4_0.gguf" Q4_0 1>&2
 
 # MTP: Q8_0, Q4_0
 "$QUANTIZE"        "$OUTPUT_DIR/mtp-${DISPLAY_NAME}-BF16.gguf" "$OUTPUT_DIR/mtp-${DISPLAY_NAME}-Q8_0.gguf" Q8_0 1>&2
@@ -49,8 +55,8 @@ FLAGS_Q4_K_M="--pure --tensor-type output.weight=q6_k --tensor-type shexp=q8_0 -
 # Preserve the established repository name for the BF16 output.
 echo "${DISPLAY_NAME}-BF16.gguf"        >> "$OUTPUT_DIR/.produced_files"
 echo "${DISPLAY_NAME}-Q8_0.gguf"        >> "$OUTPUT_DIR/.produced_files"
-echo "${DISPLAY_NAME}-Q4_K_M.gguf"      >> "$OUTPUT_DIR/.produced_files"
-#echo "${DISPLAY_NAME}-NVFP4.gguf"       >> "$OUTPUT_DIR/.produced_files"
+echo "${DISPLAY_NAME}-Q4_0.gguf"        >> "$OUTPUT_DIR/.produced_files"
+#echo "${DISPLAY_NAME}-NVFP4.gguf"      >> "$OUTPUT_DIR/.produced_files"
 
 echo "mtp-${DISPLAY_NAME}-BF16.gguf"    >> "$OUTPUT_DIR/.produced_files"
 echo "mtp-${DISPLAY_NAME}-Q8_0.gguf"    >> "$OUTPUT_DIR/.produced_files"

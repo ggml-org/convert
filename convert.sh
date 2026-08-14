@@ -10,6 +10,7 @@ ONE_MODEL=""
 FILTER_REGEX=""
 FORCE=false
 KEEP=false
+NO_UPLOAD=false
 LLAMA_COMMIT=""
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -31,6 +32,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --keep)
             KEEP=true
+            shift
+            ;;
+        --no-upload)
+            NO_UPLOAD=true
             shift
             ;;
         --llama-commit)
@@ -195,7 +200,9 @@ for config_path in "${config_paths[@]}"; do
         mkdir -p "$upload_dir"
         sed "s/__owner__/$OWNER/g" "$script_dir/README.md" > "$upload_dir/README.md"
         hf repos create "$dest" --type model --exist-ok
-        hf upload "$dest" "$upload_dir" --include "README.md" --type model
+        if [ "$NO_UPLOAD" = false ]; then
+            hf upload "$dest" "$upload_dir" --include "README.md" --type model
+        fi
         if [ "$KEEP" = false ]; then
             rm -rf "$upload_dir"
         fi
@@ -243,11 +250,13 @@ for config_path in "${config_paths[@]}"; do
         [ -n "$file" ] && gguf_flags="$gguf_flags --include $file"
     done <<< "$produced_files"
 
-    hf upload "$dest" "$upload_dir" \
-        $gguf_flags --include ".src_sha" --include "README.md" --include "convert.log" \
-        --type model
+    if [ "$NO_UPLOAD" = false ]; then
+        hf upload "$dest" "$upload_dir" \
+            $gguf_flags --include ".src_sha" --include "README.md" --include "convert.log" \
+            --type model
+        echo ">>> Uploaded to https://huggingface.co/$dest"
+    fi
 
-    echo ">>> Uploaded to https://huggingface.co/$dest"
 
     if [ "$KEEP" = false ]; then
         rm -rf "$upload_dir"

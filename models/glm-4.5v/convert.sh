@@ -23,7 +23,13 @@ python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" \
 
 # --- Quantizations ---
 
-FLAGS_Q4_K_M="--pure --tensor-type output.weight=q6_k --tensor-type shexp=q8_0 --tensor-type attn_=q8_0"
+FLAGS_Q4_K_M="--pure \
+    --tensor-type token_embd.weight=q8_0 \
+    --tensor-type ^output.weight=q6_k \
+    --tensor-type ffn_down_exps=q4_0 \
+    --tensor-type shexp=q8_0 \
+    --tensor-type attn_=q8_0 \
+    "
 
 # Main model: Q8_0, Q4_K_M
 "$QUANTIZE"               "$OUTPUT_DIR/${DISPLAY_NAME}-BF16.gguf" "$OUTPUT_DIR/${DISPLAY_NAME}-Q8_0.gguf" Q8_0 1>&2

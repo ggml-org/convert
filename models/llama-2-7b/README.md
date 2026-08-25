@@ -15,9 +15,5 @@ This model is used mainly for data collection for https://github.com/ggml-org/ll
 ### Source models
 - https://huggingface.co/meta-llama/Llama-2-7b-hf
 
-### TODOs
-
-- add info
-
 > [!IMPORTANT]
 > This model is automatically converted using https://github.com/ggml-org/convert

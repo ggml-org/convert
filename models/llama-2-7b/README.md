@@ -10,6 +10,8 @@ base_model:
 
 # Llama-2-7B
 
+This model is used mainly for data collection for https://github.com/ggml-org/llama.cpp/discussions/4167
+
 Run with https://llama.app
 
 ```bash

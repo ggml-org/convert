@@ -12,12 +12,6 @@ base_model:
 
 This model is used mainly for data collection for https://github.com/ggml-org/llama.cpp/discussions/4167
 
-Run with https://llama.app
-
-```bash
-llama serve -hf __owner__/Llama-2-7B-GGUF
-```
-
 ### Source models
 - https://huggingface.co/meta-llama/Llama-2-7b-hf
 

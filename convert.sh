@@ -12,6 +12,8 @@ FORCE=false
 KEEP=false
 NO_UPLOAD=false
 LLAMA_COMMIT=""
+LOCAL_MODEL=""
+LOCAL_LLAMA=""
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --owner)
@@ -42,6 +44,14 @@ while [[ $# -gt 0 ]]; do
             LLAMA_COMMIT="$2"
             shift 2
             ;;
+        --local-model)
+            LOCAL_MODEL="$2"
+            shift 2
+            ;;
+        --local-llama)
+            LOCAL_LLAMA="$2"
+            shift 2
+            ;;
         *)
             echo "Unknown argument: $1"
             exit 1
@@ -59,7 +69,17 @@ if [ -n "$ONE_MODEL" ] && [ -n "$FILTER_REGEX" ]; then
     exit 1
 fi
 
-if [ -z "${HF_TOKEN:-}" ]; then
+if [ -n "$LOCAL_MODEL" ] && [ ! -d "$LOCAL_MODEL" ]; then
+    echo "Error: --local-model: no such directory: $LOCAL_MODEL"
+    exit 1
+fi
+
+if [ -n "$LOCAL_LLAMA" ] && [ ! -d "$LOCAL_LLAMA" ]; then
+    echo "Error: --local-llama: no such directory: $LOCAL_LLAMA"
+    exit 1
+fi
+
+if [ "$NO_UPLOAD" = false ] && [ -z "${HF_TOKEN:-}" ]; then
     echo "Error: HF_TOKEN environment variable is not set"
     exit 1
 fi
@@ -70,6 +90,21 @@ echo ">>> Installing HF CLI"
 pip install -r requirements.txt
 
 export HF_XET_HIGH_PERFORMANCE="${HF_XET_HIGH_PERFORMANCE:-1}"
+
+repo_create_flags=(--type model --exist-ok)
+upload_flags=()
+if [ -n "$LOCAL_MODEL" ]; then
+    repo_create_flags+=(--private)
+    upload_flags+=(--private)
+fi
+
+ensure_destination_repo() {
+    local repo_id="$1"
+    hf repos create "$repo_id" "${repo_create_flags[@]}"
+    if [ -n "$LOCAL_MODEL" ]; then
+        hf repos settings "$repo_id" --private
+    fi
+}
 
 # hf upload is resumable (re-run skips committed files, dedupes uploaded shards),
 # so retry transient failures like server-side read timeouts.
@@ -89,10 +124,12 @@ hf_upload_with_retry() {
     done
 }
 
-# Check HF_TOKEN has write access to owner
-if ! hf repos create "${OWNER}/__test-permissions" --type model --exist-ok 2>/dev/null; then
-    echo "Error: HF_TOKEN does not have write access to '$OWNER'"
-    exit 1
+# Check HF_TOKEN has write access to owner when uploading
+if [ "$NO_UPLOAD" = false ]; then
+    if ! hf repos create "${OWNER}/__test-permissions" "${repo_create_flags[@]}" 2>/dev/null; then
+        echo "Error: HF_TOKEN does not have write access to '$OWNER'"
+        exit 1
+    fi
 fi
 
 # Build list of configs to process (early validation before expensive setup)
@@ -127,8 +164,13 @@ else
     CPU_COUNT=4
 fi
 
+LLAMA_DIR="llama.cpp"
+
 echo ">>> Preparing llama.cpp"
-if [ -d "llama.cpp" ]; then
+if [ -n "$LOCAL_LLAMA" ]; then
+    LLAMA_DIR="$(cd "$LOCAL_LLAMA" && pwd)"
+    echo ">>> Using local llama.cpp: $LLAMA_DIR"
+elif [ -d "llama.cpp" ]; then
     echo ">>> llama.cpp already exists"
     if [ -n "$LLAMA_COMMIT" ]; then
         cd llama.cpp && git fetch --unshallow 2>/dev/null || git fetch --all && git checkout "$LLAMA_COMMIT" && cd ..
@@ -145,11 +187,9 @@ else
 fi
 
 echo ">>> Building llama-quantize"
-cd llama.cpp
-mkdir -p build && cd build
-cmake .. -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=OFF -DLLAMA_BUILD_UI=OFF
-make -j"$CPU_COUNT" llama-quantize
-cd ../..
+(cd "$LLAMA_DIR" && mkdir -p build && cd build && \
+    cmake .. -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=OFF -DLLAMA_BUILD_UI=OFF && \
+    make -j"$CPU_COUNT" llama-quantize)
 
 # Iterate over selected config(s)
 for config_path in "${config_paths[@]}"; do
@@ -180,19 +220,23 @@ for config_path in "${config_paths[@]}"; do
         repo_var="DEP_$key"
         repo="${!repo_var}"
 
-        echo ">>> Checking for updates in $repo ($key)"
-        sha=$(python3 -c "import urllib.request, json, sys; print(json.load(urllib.request.urlopen('https://huggingface.co/api/models/' + sys.argv[1]))['sha'])" "$repo")
+        if [ -n "$LOCAL_MODEL" ]; then
+            sha="local"
+        else
+            echo ">>> Checking for updates in $repo ($key)"
+            sha=$(python3 -c "import urllib.request, json, sys; print(json.load(urllib.request.urlopen('https://huggingface.co/api/models/' + sys.argv[1]))['sha'])" "$repo")
 
-        if [ -z "$sha" ]; then
-            echo "Error: Failed to retrieve model info from Hugging Face for $repo"
-            exit 1
+            if [ -z "$sha" ]; then
+                echo "Error: Failed to retrieve model info from Hugging Face for $repo"
+                exit 1
+            fi
         fi
 
         current_sha_lines+="${key}=${sha}"$'\n'
     done
 
-    if [ "$FORCE" = true ]; then
-        echo ">>> --force flag set: skipping SHA checks, converting anyway"
+    if [ "$FORCE" = true ] || [ "$NO_UPLOAD" = true ]; then
+        echo ">>> Skipping destination SHA check, converting locally"
         needs_convert=true
     else
         # Read last-processed SHAs from destination repo
@@ -219,9 +263,9 @@ for config_path in "${config_paths[@]}"; do
         fi
         mkdir -p "$upload_dir"
         sed "s/__owner__/$OWNER/g" "$script_dir/README.md" > "$upload_dir/README.md"
-        hf repos create "$dest" --type model --exist-ok
         if [ "$NO_UPLOAD" = false ]; then
-            hf_upload_with_retry hf upload "$dest" "$upload_dir" --include "README.md" --type model
+            ensure_destination_repo "$dest"
+            hf_upload_with_retry hf upload "$dest" "$upload_dir" "${upload_flags[@]}" --include "README.md" --type model
         fi
         if [ "$KEEP" = false ]; then
             rm -rf "$upload_dir"
@@ -240,6 +284,13 @@ for config_path in "${config_paths[@]}"; do
     for key in $dep_keys; do
         repo_var="DEP_$key"
         repo="${!repo_var}"
+
+        if [ -n "$LOCAL_MODEL" ]; then
+            echo ">>> Using local model for $key: $LOCAL_MODEL"
+            export "PATH_$key=$LOCAL_MODEL"
+            continue
+        fi
+
         temp_dir="./model-temp-${display//-/_}-${key}"
         temp_dirs+=("$temp_dir")
 
@@ -250,7 +301,7 @@ for config_path in "${config_paths[@]}"; do
     done
 
     echo ">>> Running conversion script: $script_dir/convert.sh"
-    bash "$script_dir/convert.sh" "$upload_dir" "./llama.cpp" 2>&1 | tee "$upload_dir/convert.log"
+    bash "$script_dir/convert.sh" "$upload_dir" "$LLAMA_DIR" 2>&1 | tee "$upload_dir/convert.log"
 
     # Read produced files from manifest
     if [ ! -f "$upload_dir/.produced_files" ]; then
@@ -262,8 +313,6 @@ for config_path in "${config_paths[@]}"; do
     # Write .src_sha with all dependency SHAs
     printf "%s" "$current_sha_lines" > "$upload_dir/.src_sha"
 
-    hf repos create "$dest" --type model --exist-ok
-
     gguf_flags=""
 
     while IFS= read -r file; do
@@ -271,18 +320,19 @@ for config_path in "${config_paths[@]}"; do
     done <<< "$produced_files"
 
     if [ "$NO_UPLOAD" = false ]; then
-        if ! hf_upload_with_retry hf upload "$dest" "$upload_dir" $gguf_flags --include ".src_sha" --include "README.md" --include "convert.log" --type model; then
+        ensure_destination_repo "$dest"
+        if ! hf_upload_with_retry hf upload "$dest" "$upload_dir" "${upload_flags[@]}" $gguf_flags --include ".src_sha" --include "README.md" --include "convert.log" --type model; then
             # fallback: one file per commit
             echo ">>> Combined upload failed after retries. Falling back to per-file uploads."
             upload_failed=false
             while IFS= read -r file; do
                 [ -n "$file" ] || continue
                 echo ">>> Uploading $file (per-file fallback)"
-                hf_upload_with_retry hf upload "$dest" "$upload_dir/$file" --type model || upload_failed=true
+                hf_upload_with_retry hf upload "$dest" "$upload_dir/$file" "${upload_flags[@]}" --type model || upload_failed=true
             done <<< "$produced_files"
             for meta in .src_sha README.md convert.log; do
                 echo ">>> Uploading $meta (per-file fallback)"
-                hf_upload_with_retry hf upload "$dest" "$upload_dir/$meta" --type model || upload_failed=true
+                hf_upload_with_retry hf upload "$dest" "$upload_dir/$meta" "${upload_flags[@]}" --type model || upload_failed=true
             done
             if [ "$upload_failed" = true ]; then
                 echo "Error: upload to $dest failed"

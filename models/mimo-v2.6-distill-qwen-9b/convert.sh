@@ -7,6 +7,11 @@ LLAMA_CPP="$2"
 DISPLAY_NAME="MiMo-V2.6-Distill-Qwen-9B"
 QUANTIZE="$LLAMA_CPP/build/bin/llama-quantize"
 
+# Replace the buggy upstream chat template before converting.
+# ref: https://gist.github.com/coder543/d8f56cd6db67de4cafbb5bdb6c2dfb4d
+curl -fsSL "https://gist.githubusercontent.com/coder543/d8f56cd6db67de4cafbb5bdb6c2dfb4d/raw/mimo-v2.6-distill-chat-template.jinja" \
+    -o "$PATH_PRIMARY/chat_template.jinja"
+
 # --- Conversions ---
 
 # Main model: BF16 (intermediate for quantization only)

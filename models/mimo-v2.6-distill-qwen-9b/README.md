@@ -21,7 +21,6 @@ llama serve -hf __owner__/MiMo-V2.6-Distill-Qwen-9B-GGUF
 
 ### Notes
 - Includes a Q8_0 mmproj for the vision encoder.
-- TODO: remove the chat template patch from convert.sh once the upstream template is fixed (interim fix: https://gist.github.com/coder543/d8f56cd6db67de4cafbb5bdb6c2dfb4d).
 
 > [!IMPORTANT]
 > This model is automatically converted using https://github.com/ggml-org/convert

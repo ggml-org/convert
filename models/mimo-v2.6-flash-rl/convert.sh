@@ -22,6 +22,9 @@ python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" \
     --outtype bf16 --outfile "$OUTPUT_DIR/mmproj-${DISPLAY_NAME}-BF16.gguf" --mmproj --model-name "$DISPLAY_NAME"
 
 # DFlash draft: BF16 (lives in the dflash/ subdirectory of the primary repo)
+# note: shard discovery matches model*.safetensors before reading model.safetensors.index.json,
+#       but upstream names it dflash_draft_model.safetensors - symlink to pass the prefix check
+ln -sfn dflash_draft_model.safetensors "$PATH_PRIMARY/dflash/model.safetensors"
 python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY/dflash" \
     --outtype bf16 --target-model-dir "$PATH_PRIMARY" \
     --outfile "$OUTPUT_DIR/dflash-${DISPLAY_NAME}-BF16.gguf" --model-name "$DISPLAY_NAME"

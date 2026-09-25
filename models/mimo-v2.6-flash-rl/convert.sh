@@ -21,6 +21,11 @@ python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" \
 python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" \
     --outtype bf16 --outfile "$OUTPUT_DIR/mmproj-${DISPLAY_NAME}-BF16.gguf" --mmproj --model-name "$DISPLAY_NAME"
 
+# DFlash draft: BF16 (lives in the dflash/ subdirectory of the primary repo)
+python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY/dflash" \
+    --outtype bf16 --target-model-dir "$PATH_PRIMARY" \
+    --outfile "$OUTPUT_DIR/dflash-${DISPLAY_NAME}-BF16.gguf" --model-name "$DISPLAY_NAME"
+
 # --- Quantizations ---
 
 FLAGS_MXFP4=" \
@@ -52,6 +57,9 @@ FLAGS_Q2_K="--pure \
 python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" \
     --outtype q8_0 --outfile "$OUTPUT_DIR/mmproj-${DISPLAY_NAME}-Q8_0.gguf" --mmproj --model-name "$DISPLAY_NAME"
 
+# DFlash draft: Q8_0
+"$QUANTIZE" "$OUTPUT_DIR/dflash-${DISPLAY_NAME}-BF16.gguf" "$OUTPUT_DIR/dflash-${DISPLAY_NAME}-Q8_0.gguf" Q8_0 1>&2
+
 # --- Produced files ---
 
 echo "${DISPLAY_NAME}-MXFP4-00001-of-00002.gguf" >> "$OUTPUT_DIR/.produced_files"
@@ -63,3 +71,5 @@ echo "mtp-${DISPLAY_NAME}-Q4_0.gguf"             >> "$OUTPUT_DIR/.produced_files
 echo "mtp-${DISPLAY_NAME}-Q8_0.gguf"             >> "$OUTPUT_DIR/.produced_files"
 echo "mmproj-${DISPLAY_NAME}-BF16.gguf"          >> "$OUTPUT_DIR/.produced_files"
 echo "mmproj-${DISPLAY_NAME}-Q8_0.gguf"          >> "$OUTPUT_DIR/.produced_files"
+echo "dflash-${DISPLAY_NAME}-BF16.gguf"          >> "$OUTPUT_DIR/.produced_files"
+echo "dflash-${DISPLAY_NAME}-Q8_0.gguf"          >> "$OUTPUT_DIR/.produced_files"

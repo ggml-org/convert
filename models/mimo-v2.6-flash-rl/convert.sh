@@ -23,7 +23,7 @@ python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" \
 
 # --- Quantizations ---
 
-FLAGS_MXFP4="--tensor-type ffn_gate_inp.weight=q8_0 \
+FLAGS_MXFP4=" \
 "
 
 # Main model: MXFP4_MOE
@@ -33,7 +33,9 @@ FLAGS_Q2_K="--pure \
     --tensor-type token_embd.weight=q8_0 \
     --tensor-type ^output.weight=q6_k \
     --tensor-type attn_=q8_0 \
-    --tensor-type ffn_gate_inp.weight=q8_0 \
+    --tensor-type ffn_down.weight=q8_0 \
+    --tensor-type ffn_gate.weight=q8_0 \
+    --tensor-type ffn_up.weight=q8_0 \
     --tensor-type ffn_down_exps=mxfp4 \
     --tensor-type ffn_gate_exps=q2_k \
     --tensor-type ffn_up_exps=q2_k \

@@ -46,7 +46,7 @@ FLAGS_Q2_K="--pure \
     --include-weights ffn_gate_exps \
     --include-weights ffn_up_exps \
     --tensor-type token_embd.weight=q8_0 \
-    --tensor-type ^output.weight=q6_k \
+    --tensor-type ^output.weight=q8_0 \
     --tensor-type attn_=q8_0 \
     --tensor-type ffn_down.weight=q8_0 \
     --tensor-type ffn_gate.weight=q8_0 \

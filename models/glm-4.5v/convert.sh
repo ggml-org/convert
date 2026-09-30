@@ -25,7 +25,7 @@ python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" \
 
 FLAGS_Q4_K_M="--pure \
     --tensor-type token_embd.weight=q8_0 \
-    --tensor-type ^output.weight=q6_k \
+    --tensor-type ^output.weight=q8_0 \
     --tensor-type ffn_down_exps.weight=q4_0 \
     --tensor-type ffn_down.weight=q8_0 \
     --tensor-type ffn_gate.weight=q8_0 \

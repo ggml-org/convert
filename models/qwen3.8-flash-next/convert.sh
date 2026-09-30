@@ -33,7 +33,7 @@ python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" \
 FLAGS_IQ4_NL="--pure \
     --tensor-type per_layer_token_embd.weight=q4_0 \
     --tensor-type ^token_embd.weight=q8_0 \
-    --tensor-type ^output.weight=q6_k \
+    --tensor-type ^output.weight=q8_0 \
     --tensor-type attn_=q8_0 \
     --tensor-type ssm_=q8_0 \
     --tensor-type shexp=q8_0 \

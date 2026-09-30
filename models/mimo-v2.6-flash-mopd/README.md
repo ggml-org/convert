@@ -25,7 +25,7 @@ llama serve -hf __owner__/MiMo-V2.6-Flash-MOPD-GGUF
 - Includes MTP sidecars (Q4_0 and Q8_0) for speculative decoding (`--mtp`).
 - Includes a DFlash drafter sidecar (BF16 and Q8_0) for speculative decoding, converted from the `dflash/` subdirectory of the source repo.
 - Includes a Q8_0 mmproj for the vision and audio encoders.
-- Currently, the Q2 models do not use an imatrix calibration due to lack of one.
+- The Q2_K expert gate/up tensors are calibrated with the imatrix from https://huggingface.co/AesSedai/MiMo-V2.6-Flash-MOPD-GGUF
 
 > [!IMPORTANT]
 > This model is automatically converted using https://github.com/ggml-org/convert

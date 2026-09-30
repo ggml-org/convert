@@ -37,7 +37,14 @@ FLAGS_MXFP4=" \
 # Main model: MXFP4_MOE
 "$QUANTIZE" --keep-split $FLAGS_MXFP4 "$OUTPUT_DIR/${DISPLAY_NAME}-BF16-00001-of-00002.gguf" "$OUTPUT_DIR/${DISPLAY_NAME}-MXFP4.gguf" MXFP4_MOE 1>&2
 
+# imatrix calibration for the Q2_K output
+# note: single-file download, not a DEP_* - the upstream repo also ships ~300GB of quants
+hf download "AesSedai/MiMo-V2.6-Flash-MOPD-GGUF" imatrix-bpw.gguf --local-dir "$OUTPUT_DIR" 1>&2
+
 FLAGS_Q2_K="--pure \
+    --imatrix $OUTPUT_DIR/imatrix-bpw.gguf \
+    --include-weights ffn_gate_exps \
+    --include-weights ffn_up_exps \
     --tensor-type token_embd.weight=q8_0 \
     --tensor-type ^output.weight=q6_k \
     --tensor-type attn_=q8_0 \

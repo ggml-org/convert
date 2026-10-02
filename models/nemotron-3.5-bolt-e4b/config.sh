@@ -1,0 +1,4 @@
+DISPLAY_NAME="NVIDIA-Nemotron-3.5-Bolt-E4B"
+DEST_REPO="NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF"
+DEP_PRIMARY="nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB-BF16"
+DEP_DFLASH="nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB-DFlash-NVFP4"

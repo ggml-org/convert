@@ -1,0 +1,3 @@
+DISPLAY_NAME="GLM-5.3-Flash"
+DEST_REPO="GLM-5.3-Flash-GGUF"
+DEP_PRIMARY="zai-org/GLM-5.3-Flash-BF16"

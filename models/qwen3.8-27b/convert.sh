@@ -29,7 +29,7 @@ python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_DFLASH" \
 # --- Quantizations ---
 
 FLAGS_Q4_K_M="--pure \
-    --tensor-type output.weight=q6_k \
+    --tensor-type ^output.weight=q8_0 \
     --tensor-type shexp=q8_0 \
     --tensor-type latent=q8_0 \
     --tensor-type attn_=q8_0 \

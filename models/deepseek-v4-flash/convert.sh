@@ -27,7 +27,7 @@ FLAGS_MXFP4="\
 
 FLAGS_Q2_K="--pure \
     --tensor-type token_embd.weight=q8_0 \
-    --tensor-type output.weight=q6_k \
+    --tensor-type ^output.weight=q8_0 \
     --tensor-type attn_=q8_0 \
     --tensor-type shexp=q8_0 \
     --tensor-type hc_attn=q8_0 \
@@ -44,7 +44,7 @@ FLAGS_Q2_K="--pure \
 
 FLAGS_Q2_K_S="--pure \
     --tensor-type token_embd.weight=q8_0 \
-    --tensor-type output.weight=q6_k \
+    --tensor-type ^output.weight=q8_0 \
     --tensor-type attn_=q8_0 \
     --tensor-type shexp=q8_0 \
     --tensor-type hc_attn=q8_0 \

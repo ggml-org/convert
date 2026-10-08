@@ -22,10 +22,11 @@ llama serve -hf __owner__/MiMo-V2.6-Flash-MOPD-GGUF
 ### Notes
 - The MXFP4 output keeps the routed experts at their native MXFP4 precision.
 - The Q2_K output keeps the expert down projections at MXFP4, and quantizes the gate/up projections to Q2_K.
+- The Q2_K_S output is smaller than Q2_K - all routed expert projections (down, gate, up) are quantized to Q2_K.
 - Includes MTP sidecars (Q4_0 and Q8_0) for speculative decoding (`--mtp`).
 - Includes a DFlash drafter sidecar (BF16 and Q8_0) for speculative decoding, converted from the `dflash/` subdirectory of the source repo.
 - Includes a Q8_0 mmproj for the vision and audio encoders.
-- The Q2_K expert gate/up tensors are calibrated with the imatrix from https://huggingface.co/AesSedai/MiMo-V2.6-Flash-MOPD-GGUF
+- The Q2_K / Q2_K_S expert tensors are calibrated with the imatrix from https://huggingface.co/AesSedai/MiMo-V2.6-Flash-MOPD-GGUF
 
 > [!IMPORTANT]
 > This model is automatically converted using https://github.com/ggml-org/convert

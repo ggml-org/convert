@@ -37,7 +37,7 @@ FLAGS_MXFP4=" \
 # Main model: MXFP4_MOE
 "$QUANTIZE" --keep-split $FLAGS_MXFP4 "$OUTPUT_DIR/${DISPLAY_NAME}-BF16-00001-of-00002.gguf" "$OUTPUT_DIR/${DISPLAY_NAME}-MXFP4.gguf" MXFP4_MOE 1>&2
 
-# imatrix calibration for the Q2_K output
+# imatrix calibration for the Q2_K outputs
 # note: single-file download, not a DEP_* - the upstream repo also ships ~300GB of quants
 hf download "AesSedai/MiMo-V2.6-Flash-MOPD-GGUF" imatrix-bpw.gguf --local-dir "$OUTPUT_DIR" 1>&2
 
@@ -59,6 +59,26 @@ FLAGS_Q2_K="--pure \
 # Main model: MXFP4_MOE + Q2_K overrides
 "$QUANTIZE" --keep-split --allow-requantize $FLAGS_Q2_K "$OUTPUT_DIR/${DISPLAY_NAME}-BF16-00001-of-00002.gguf" "$OUTPUT_DIR/${DISPLAY_NAME}-Q2_K.gguf" MXFP4_MOE 1>&2
 
+# note: same as Q2_K but the expert down projections are requantized to Q2_K too (instead of staying MXFP4)
+FLAGS_Q2_K_S="--pure \
+    --imatrix $OUTPUT_DIR/imatrix-bpw.gguf \
+    --include-weights ffn_gate_exps \
+    --include-weights ffn_up_exps \
+    --include-weights ffn_down_exps \
+    --tensor-type token_embd.weight=q8_0 \
+    --tensor-type ^output.weight=q8_0 \
+    --tensor-type attn_=q8_0 \
+    --tensor-type ffn_down.weight=q8_0 \
+    --tensor-type ffn_gate.weight=q8_0 \
+    --tensor-type ffn_up.weight=q8_0 \
+    --tensor-type ffn_down_exps=q2_k \
+    --tensor-type ffn_gate_exps=q2_k \
+    --tensor-type ffn_up_exps=q2_k \
+"
+
+# Main model: MXFP4_MOE + Q2_K_S overrides
+"$QUANTIZE" --keep-split --allow-requantize $FLAGS_Q2_K_S "$OUTPUT_DIR/${DISPLAY_NAME}-BF16-00001-of-00002.gguf" "$OUTPUT_DIR/${DISPLAY_NAME}-Q2_K_S.gguf" MXFP4_MOE 1>&2
+
 # MTP sidecar: Q4_0 + Q8_0
 "$QUANTIZE" --pure "$OUTPUT_DIR/mtp-${DISPLAY_NAME}-BF16.gguf" "$OUTPUT_DIR/mtp-${DISPLAY_NAME}-Q4_0.gguf" Q4_0 1>&2
 "$QUANTIZE"        "$OUTPUT_DIR/mtp-${DISPLAY_NAME}-BF16.gguf" "$OUTPUT_DIR/mtp-${DISPLAY_NAME}-Q8_0.gguf" Q8_0 1>&2
@@ -72,14 +92,16 @@ python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" \
 
 # --- Produced files ---
 
-echo "${DISPLAY_NAME}-MXFP4-00001-of-00002.gguf" >> "$OUTPUT_DIR/.produced_files"
-echo "${DISPLAY_NAME}-MXFP4-00002-of-00002.gguf" >> "$OUTPUT_DIR/.produced_files"
-echo "${DISPLAY_NAME}-Q2_K-00001-of-00002.gguf"  >> "$OUTPUT_DIR/.produced_files"
-echo "${DISPLAY_NAME}-Q2_K-00002-of-00002.gguf"  >> "$OUTPUT_DIR/.produced_files"
-echo "mtp-${DISPLAY_NAME}-BF16.gguf"             >> "$OUTPUT_DIR/.produced_files"
-echo "mtp-${DISPLAY_NAME}-Q4_0.gguf"             >> "$OUTPUT_DIR/.produced_files"
-echo "mtp-${DISPLAY_NAME}-Q8_0.gguf"             >> "$OUTPUT_DIR/.produced_files"
-echo "mmproj-${DISPLAY_NAME}-BF16.gguf"          >> "$OUTPUT_DIR/.produced_files"
-echo "mmproj-${DISPLAY_NAME}-Q8_0.gguf"          >> "$OUTPUT_DIR/.produced_files"
-echo "dflash-${DISPLAY_NAME}-BF16.gguf"          >> "$OUTPUT_DIR/.produced_files"
-echo "dflash-${DISPLAY_NAME}-Q8_0.gguf"          >> "$OUTPUT_DIR/.produced_files"
+echo "${DISPLAY_NAME}-MXFP4-00001-of-00002.gguf"  >> "$OUTPUT_DIR/.produced_files"
+echo "${DISPLAY_NAME}-MXFP4-00002-of-00002.gguf"  >> "$OUTPUT_DIR/.produced_files"
+echo "${DISPLAY_NAME}-Q2_K-00001-of-00002.gguf"   >> "$OUTPUT_DIR/.produced_files"
+echo "${DISPLAY_NAME}-Q2_K-00002-of-00002.gguf"   >> "$OUTPUT_DIR/.produced_files"
+echo "${DISPLAY_NAME}-Q2_K_S-00001-of-00002.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "${DISPLAY_NAME}-Q2_K_S-00002-of-00002.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "mtp-${DISPLAY_NAME}-BF16.gguf"              >> "$OUTPUT_DIR/.produced_files"
+echo "mtp-${DISPLAY_NAME}-Q4_0.gguf"              >> "$OUTPUT_DIR/.produced_files"
+echo "mtp-${DISPLAY_NAME}-Q8_0.gguf"              >> "$OUTPUT_DIR/.produced_files"
+echo "mmproj-${DISPLAY_NAME}-BF16.gguf"           >> "$OUTPUT_DIR/.produced_files"
+echo "mmproj-${DISPLAY_NAME}-Q8_0.gguf"           >> "$OUTPUT_DIR/.produced_files"
+echo "dflash-${DISPLAY_NAME}-BF16.gguf"           >> "$OUTPUT_DIR/.produced_files"
+echo "dflash-${DISPLAY_NAME}-Q8_0.gguf"           >> "$OUTPUT_DIR/.produced_files"

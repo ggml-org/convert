@@ -38,13 +38,31 @@ FLAGS_BASE="--pure \
     --tensor-type indexer=q8_0 \
 "
 
+# imatrix calibration for the low-bit outputs
+# note: single-file download, not a DEP_* - the upstream repo also ships >1TB of quants
+hf download "AesSedai/GLM-5.3-Flash-GGUF" imatrix.gguf --local-dir "$OUTPUT_DIR" 1>&2
+
+# note: restrict the imatrix to the routed experts, everything else is already kept at Q8_0
+FLAGS_IMATRIX="--imatrix $OUTPUT_DIR/imatrix.gguf \
+    --include-weights ffn_gate_exps \
+    --include-weights ffn_up_exps \
+    --include-weights ffn_down_exps \
+"
+
 # Main model: Q4_K (all routed experts at Q4_K)
 "$QUANTIZE" --keep-split $FLAGS_BASE "$OUTPUT_DIR/${DISPLAY_NAME}-BF16-00001-of-00002.gguf" "$OUTPUT_DIR/${DISPLAY_NAME}-Q4_K.gguf" Q4_K 1>&2
 
 # Main model: Q2_K (routed down experts at Q4_K, gate/up experts at Q2_K)
-"$QUANTIZE" --keep-split $FLAGS_BASE \
+"$QUANTIZE" --keep-split $FLAGS_BASE $FLAGS_IMATRIX \
     --tensor-type ffn_down_exps=q4_k \
     "$OUTPUT_DIR/${DISPLAY_NAME}-BF16-00001-of-00002.gguf" "$OUTPUT_DIR/${DISPLAY_NAME}-Q2_K.gguf" Q2_K 1>&2
+
+# Main model: Q2_K_S (all routed experts at Q2_K)
+"$QUANTIZE" --keep-split $FLAGS_BASE $FLAGS_IMATRIX \
+    --tensor-type ffn_down_exps=q2_k \
+    --tensor-type ffn_gate_exps=q2_k \
+    --tensor-type ffn_up_exps=q2_k \
+    "$OUTPUT_DIR/${DISPLAY_NAME}-BF16-00001-of-00002.gguf" "$OUTPUT_DIR/${DISPLAY_NAME}-Q2_K_S.gguf" Q2_K 1>&2
 
 # MTP sidecar: Q8_0, Q4_0
 "$QUANTIZE"        "$OUTPUT_DIR/mtp-${DISPLAY_NAME}-BF16.gguf" "$OUTPUT_DIR/mtp-${DISPLAY_NAME}-Q8_0.gguf" Q8_0 1>&2
@@ -56,6 +74,8 @@ echo "${DISPLAY_NAME}-Q4_K-00001-of-00002.gguf" >> "$OUTPUT_DIR/.produced_files"
 echo "${DISPLAY_NAME}-Q4_K-00002-of-00002.gguf" >> "$OUTPUT_DIR/.produced_files"
 echo "${DISPLAY_NAME}-Q2_K-00001-of-00002.gguf" >> "$OUTPUT_DIR/.produced_files"
 echo "${DISPLAY_NAME}-Q2_K-00002-of-00002.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "${DISPLAY_NAME}-Q2_K_S-00001-of-00002.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "${DISPLAY_NAME}-Q2_K_S-00002-of-00002.gguf" >> "$OUTPUT_DIR/.produced_files"
 echo "mtp-${DISPLAY_NAME}-Q8_0.gguf" >> "$OUTPUT_DIR/.produced_files"
 echo "mtp-${DISPLAY_NAME}-Q4_0.gguf" >> "$OUTPUT_DIR/.produced_files"
 echo "mmproj-${DISPLAY_NAME}-Q8_0.gguf" >> "$OUTPUT_DIR/.produced_files"

@@ -43,6 +43,23 @@ FLAGS_IQ4_NL="--pure \
 "$QUANTIZE" --keep-split $FLAGS_IQ4_NL \
     "$OUTPUT_DIR/${DISPLAY_NAME}-BF16-00001-of-00002.gguf" "$OUTPUT_DIR/${DISPLAY_NAME}-IQ4_NL.gguf" IQ4_NL 1>&2
 
+# imatrix calibration for the Q2_K output
+# note: single-file download, not a DEP_* - the upstream repo also ships >1TB of quants
+hf download "AesSedai/Qwen3.8-Flash-Next-GGUF" imatrix.gguf --local-dir "$OUTPUT_DIR" 1>&2
+
+# note: same overrides as IQ4_NL, the routed gate/up experts drop to Q2_K and use the imatrix,
+#       while the routed down experts stay at IQ4_NL (imatrix is not applied to them)
+FLAGS_Q2_K="$FLAGS_IQ4_NL \
+    --imatrix $OUTPUT_DIR/imatrix.gguf \
+    --include-weights ffn_gate_exps \
+    --include-weights ffn_up_exps \
+    --tensor-type ffn_down_exps=iq4_nl \
+"
+
+# Main model: Q2_K (routed gate/up experts at Q2_K, routed down experts at IQ4_NL)
+"$QUANTIZE" --keep-split $FLAGS_Q2_K \
+    "$OUTPUT_DIR/${DISPLAY_NAME}-BF16-00001-of-00002.gguf" "$OUTPUT_DIR/${DISPLAY_NAME}-Q2_K.gguf" Q2_K 1>&2
+
 # MTP: Q8_0, Q4_0
 "$QUANTIZE"        "$OUTPUT_DIR/mtp-${DISPLAY_NAME}-BF16.gguf" "$OUTPUT_DIR/mtp-${DISPLAY_NAME}-Q8_0.gguf" Q8_0 1>&2
 "$QUANTIZE" --pure "$OUTPUT_DIR/mtp-${DISPLAY_NAME}-BF16.gguf" "$OUTPUT_DIR/mtp-${DISPLAY_NAME}-Q4_0.gguf" Q4_0 1>&2
@@ -53,6 +70,8 @@ echo "${DISPLAY_NAME}-Q8_0-00001-of-00002.gguf" >> "$OUTPUT_DIR/.produced_files"
 echo "${DISPLAY_NAME}-Q8_0-00002-of-00002.gguf" >> "$OUTPUT_DIR/.produced_files"
 echo "${DISPLAY_NAME}-IQ4_NL-00001-of-00002.gguf" >> "$OUTPUT_DIR/.produced_files"
 echo "${DISPLAY_NAME}-IQ4_NL-00002-of-00002.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "${DISPLAY_NAME}-Q2_K-00001-of-00002.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "${DISPLAY_NAME}-Q2_K-00002-of-00002.gguf" >> "$OUTPUT_DIR/.produced_files"
 echo "mmproj-${DISPLAY_NAME}-Q8_0.gguf" >> "$OUTPUT_DIR/.produced_files"
 echo "mtp-${DISPLAY_NAME}-BF16.gguf" >> "$OUTPUT_DIR/.produced_files"
 echo "mtp-${DISPLAY_NAME}-Q8_0.gguf" >> "$OUTPUT_DIR/.produced_files"

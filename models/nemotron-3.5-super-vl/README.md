@@ -13,7 +13,7 @@ base_model:
 Run with https://llama.app
 
 ```bash
-llama serve -hf __owner__/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-BF16-GGUF
+llama serve -hf __owner__/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-GGUF
 ```
 
 ### Source models

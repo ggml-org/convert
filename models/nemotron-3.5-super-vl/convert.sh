@@ -41,7 +41,7 @@ FLAGS_Q4_0="--pure \
     "
 
 # Main model: Q8_0, Q4_0
-"$QUANTIZE"               "$OUTPUT_DIR/${DISPLAY_NAME}-BF16.gguf" "$OUTPUT_DIR/${DISPLAY_NAME}-Q8_0.gguf" Q8_0 1>&2
+"$QUANTIZE"             "$OUTPUT_DIR/${DISPLAY_NAME}-BF16.gguf" "$OUTPUT_DIR/${DISPLAY_NAME}-Q8_0.gguf" Q8_0 1>&2
 "$QUANTIZE" $FLAGS_Q4_0 "$OUTPUT_DIR/${DISPLAY_NAME}-BF16.gguf" "$OUTPUT_DIR/${DISPLAY_NAME}-Q4_0.gguf" Q4_0 1>&2
 
 # mmproj: Q8_0

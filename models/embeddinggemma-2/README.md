@@ -11,7 +11,9 @@ base_model:
 
 # embeddinggemma-2
 
-Run with https://llama.app
+Run it in the Llama app: https://llama.app
+
+Or from the terminal:
 
 ```bash
 llama serve -hf __owner__/embeddinggemma-2-GGUF

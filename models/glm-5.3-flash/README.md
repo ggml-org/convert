@@ -10,7 +10,9 @@ base_model:
 
 # GLM-5.3-Flash
 
-Run with https://llama.app
+Run it in the Llama app: https://llama.app
+
+Or from the terminal:
 
 ```bash
 llama serve -hf __owner__/GLM-5.3-Flash-GGUF

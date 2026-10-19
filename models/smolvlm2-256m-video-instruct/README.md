@@ -10,7 +10,9 @@ base_model:
 
 # SmolVLM2-256M-Video-Instruct
 
-Run with https://llama.app
+Run it in the Llama app: https://llama.app
+
+Or from the terminal:
 
 ```bash
 llama serve -hf __owner__/SmolVLM2-256M-Video-Instruct-GGUF

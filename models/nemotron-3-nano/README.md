@@ -10,7 +10,9 @@ base_model:
 
 # NVIDIA-Nemotron-3-Nano-30B-A3B
 
-Run with https://llama.app
+Run it in the Llama app: https://llama.app
+
+Or from the terminal:
 
 ```bash
 llama serve -hf __owner__/NVIDIA-Nemotron-3-Nano-30B-A3B-GGUF

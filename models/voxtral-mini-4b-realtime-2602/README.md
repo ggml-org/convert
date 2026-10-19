@@ -10,7 +10,9 @@ base_model:
 
 # Voxtral-Mini-4B-Realtime-2602
 
-Run with https://llama.app
+Run it in the Llama app: https://llama.app
+
+Or from the terminal:
 
 ```bash
 llama serve -hf __owner__/Voxtral-Mini-4B-Realtime-2602-GGUF

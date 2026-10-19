@@ -11,7 +11,9 @@ base_model:
 
 # Bespoke-Nimble-9B-v3
 
-Run with https://llama.app
+Run it in the Llama app: https://llama.app
+
+Or from the terminal:
 
 ```bash
 llama serve -hf __owner__/Bespoke-Nimble-9B-v3-GGUF

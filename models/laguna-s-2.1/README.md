@@ -10,7 +10,9 @@ base_model:
 
 # Laguna-S-2.1
 
-Run with https://llama.app
+Run it in the Llama app: https://llama.app
+
+Or from the terminal:
 
 ```bash
 llama serve -hf __owner__/Laguna-S-2.1-GGUF

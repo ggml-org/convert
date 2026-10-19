@@ -10,7 +10,9 @@ base_model:
 
 # DeepSeek-V4-Flash
 
-Run with https://llama.app
+Run it in the Llama app: https://llama.app
+
+Or from the terminal:
 
 ```bash
 llama serve -hf __owner__/DeepSeek-V4-Flash-GGUF

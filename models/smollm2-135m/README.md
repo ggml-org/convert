@@ -10,7 +10,9 @@ base_model:
 
 # SmolLM2-135M
 
-Run with https://llama.app
+Run it in the Llama app: https://llama.app
+
+Or from the terminal:
 
 ```bash
 llama serve -hf __owner__/SmolLM2-135M-GGUF

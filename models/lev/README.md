@@ -11,7 +11,9 @@ base_model:
 
 # lev
 
-Run with https://llama.app
+Run it in the Llama app: https://llama.app
+
+Or from the terminal:
 
 ```bash
 llama serve -hf __owner__/lev-GGUF

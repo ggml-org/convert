@@ -10,7 +10,9 @@ base_model:
 
 # gpt-oss-20b
 
-Run with https://llama.app
+Run it in the Llama app: https://llama.app
+
+Or from the terminal:
 
 ```bash
 llama serve -hf __owner__/gpt-oss-20b-GGUF

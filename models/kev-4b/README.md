@@ -11,7 +11,9 @@ base_model:
 
 # Kev-4B
 
-Run with https://llama.app
+Run it in the Llama app: https://llama.app
+
+Or from the terminal:
 
 ```bash
 llama serve -hf __owner__/Kev-4B-GGUF

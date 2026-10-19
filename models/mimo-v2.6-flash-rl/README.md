@@ -10,7 +10,9 @@ base_model:
 
 # MiMo-V2.6-Flash-RL
 
-Run with https://llama.app
+Run it in the Llama app: https://llama.app
+
+Or from the terminal:
 
 ```bash
 llama serve -hf __owner__/MiMo-V2.6-Flash-RL-GGUF

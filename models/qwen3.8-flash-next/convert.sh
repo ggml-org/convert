@@ -24,6 +24,11 @@ python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" \
 python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" \
     --outtype q8_0 --outfile "$OUTPUT_DIR/mmproj-${DISPLAY_NAME}-Q8_0.gguf" --mmproj --model-name "$DISPLAY_NAME"
 
+# DFlash draft: needs the target model dir for tokenizer and layer metadata
+python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_DFLASH" \
+    --outtype bf16 --target-model-dir "$PATH_PRIMARY" \
+    --outfile "$OUTPUT_DIR/dflash-${DISPLAY_NAME}-BF16.gguf" --model-name "$DISPLAY_NAME"
+
 # --- Quantizations ---
 
 # Main model: Q8_0, per_layer_token_embd Q4_0
@@ -64,6 +69,10 @@ FLAGS_Q2_K="$FLAGS_IQ4_NL \
 "$QUANTIZE"        "$OUTPUT_DIR/mtp-${DISPLAY_NAME}-BF16.gguf" "$OUTPUT_DIR/mtp-${DISPLAY_NAME}-Q8_0.gguf" Q8_0 1>&2
 "$QUANTIZE" --pure "$OUTPUT_DIR/mtp-${DISPLAY_NAME}-BF16.gguf" "$OUTPUT_DIR/mtp-${DISPLAY_NAME}-Q4_0.gguf" Q4_0 1>&2
 
+# DFlash: Q8_0, Q4_0
+"$QUANTIZE"        "$OUTPUT_DIR/dflash-${DISPLAY_NAME}-BF16.gguf" "$OUTPUT_DIR/dflash-${DISPLAY_NAME}-Q8_0.gguf" Q8_0 1>&2
+"$QUANTIZE" --pure "$OUTPUT_DIR/dflash-${DISPLAY_NAME}-BF16.gguf" "$OUTPUT_DIR/dflash-${DISPLAY_NAME}-Q4_0.gguf" Q4_0 1>&2
+
 # --- Produced files ---
 
 echo "${DISPLAY_NAME}-Q8_0-00001-of-00002.gguf" >> "$OUTPUT_DIR/.produced_files"
@@ -76,3 +85,6 @@ echo "mmproj-${DISPLAY_NAME}-Q8_0.gguf" >> "$OUTPUT_DIR/.produced_files"
 echo "mtp-${DISPLAY_NAME}-BF16.gguf" >> "$OUTPUT_DIR/.produced_files"
 echo "mtp-${DISPLAY_NAME}-Q8_0.gguf" >> "$OUTPUT_DIR/.produced_files"
 echo "mtp-${DISPLAY_NAME}-Q4_0.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "dflash-${DISPLAY_NAME}-BF16.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "dflash-${DISPLAY_NAME}-Q8_0.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "dflash-${DISPLAY_NAME}-Q4_0.gguf" >> "$OUTPUT_DIR/.produced_files"

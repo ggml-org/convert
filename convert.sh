@@ -106,6 +106,19 @@ ensure_destination_repo() {
     fi
 }
 
+# Add the destination repo to the collection given by $COLLECTION (from config.sh).
+# The collection must already exist which can be done using create-collection.sh.
+add_to_collection() {
+    local repo_id="$1"
+    if ! hf collections info "$COLLECTION" >/dev/null 2>&1; then
+        echo "Error: Collection '$COLLECTION' not found."
+        echo "Create it first with: bash create-collection.sh --owner <owner> --name <name> [--public] [--no-hash]"
+        exit 1
+    fi
+    echo ">>> Adding $repo_id to collection $COLLECTION"
+    hf collections add-item "$COLLECTION" "$repo_id" model --exists-ok
+}
+
 # hf upload is resumable (re-run skips committed files, dedupes uploaded shards),
 # so retry transient failures like server-side read timeouts.
 hf_upload_with_retry() {
@@ -195,10 +208,11 @@ echo ">>> Building llama-quantize"
 for config_path in "${config_paths[@]}"; do
     script_dir="$(dirname "$config_path")"
 
-    # Clean up DEP_* and PATH_* from previous iteration
+    # Clean up DEP_*, PATH_* and COLLECTION from previous iteration
     for var in $(compgen -v | grep -E '^(DEP_|PATH_)' || true); do
         unset "$var"
     done
+    COLLECTION=""
 
     source "$config_path"
 
@@ -266,6 +280,9 @@ for config_path in "${config_paths[@]}"; do
         if [ "$NO_UPLOAD" = false ]; then
             ensure_destination_repo "$dest"
             hf_upload_with_retry hf upload "$dest" "$upload_dir" "${upload_flags[@]}" --include "README.md" --type model
+            if [ -n "$COLLECTION" ]; then
+                add_to_collection "$dest"
+            fi
         fi
         if [ "$KEEP" = false ]; then
             rm -rf "$upload_dir"
@@ -340,6 +357,9 @@ for config_path in "${config_paths[@]}"; do
             fi
         fi
         echo ">>> Uploaded to https://huggingface.co/$dest"
+        if [ -n "$COLLECTION" ]; then
+            add_to_collection "$dest"
+        fi
     fi
 
 

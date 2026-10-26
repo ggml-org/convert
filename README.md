@@ -43,7 +43,38 @@ bash hf-job.sh --owner <org>
 
 # Run via HF Jobs with a custom hardware flavor
 bash hf-job.sh --owner <org> --hardware cpu-basic
+
+# Create a collection on Hugging Face (prints the collection slug)
+# Collections are private by default and titled with the sha256 of the name;
+# use --public for a public collection and --no-hash to title it with the name as-is
+bash create-collection.sh --owner <org> --name <name> [--public] [--no-hash] [--description <text>]
+
+# Look up the slug of an existing collection from its name
+bash create-collection.sh --lookup --owner <org> --name <name>
 ```
+
+### Collections
+
+New models are often prepared before their name is public, and the HF organization
+includes members that should not see the name. In that case a private collection
+(the default) can be created up front titled with the sha256 of the model name, so
+the name is not exposed on the Hub; the collection slug is stable, so the collection
+link can be shared (e.g. with partners for marketing material) and the collection
+renamed later without breaking the link:
+
+```bash
+# Create the collection and note down the slug it prints
+bash create-collection.sh --owner <org> --name "New Model"
+
+# Look the slug up again later from the name (hashing is deterministic)
+bash create-collection.sh --lookup --owner <org> --name "New Model"
+
+# Reference the collection in the model's config.sh
+COLLECTION="<org>/<slug>"
+```
+
+When `COLLECTION` is set in a model's [config.sh](models/), `convert.sh` adds the
+uploaded model repo to the collection after each upload.
 
 ## Notes
 
@@ -57,3 +88,5 @@ bash hf-job.sh --owner <org> --hardware cpu-basic
 
 - A maintainer from the [ggml-org/hf](https://github.com/orgs/ggml-org/teams/hf) team can start the workflow manually from the [Actions pane](https://github.com/ggml-org/convert/actions/workflows/main.yml)
 - The conversion uses the latest `master` of [llama.cpp](https://github.com/ggml-org/llama.cpp) unless `--llama-commit` is set
+- If a model's [config.sh](models/) sets `COLLECTION`, the collection must already exist (e.g. created with `create-collection.sh`); the conversion fails otherwise
+- Collection names are hashed with sha256 by default; lookup is exact (case-sensitive), so use the same name as when the collection was created

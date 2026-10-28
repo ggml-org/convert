@@ -44,9 +44,7 @@ bash hf-job.sh --owner <org>
 # Run via HF Jobs with a custom hardware flavor
 bash hf-job.sh --owner <org> --hardware cpu-basic
 
-# Create a collection on Hugging Face (prints the collection slug)
-# Collections are private by default and titled with the sha256 of the name;
-# use --public for a public collection and --no-hash to title it with the name as-is
+# Create a collection on Hugging Face (prints the collection slug, private by default)
 bash create-collection.sh --owner <org> --name <name> [--public] [--no-hash] [--description <text>]
 
 # Look up the slug of an existing collection from its name

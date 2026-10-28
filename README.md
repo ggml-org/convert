@@ -53,29 +53,6 @@ bash create-collection.sh --owner <org> --name <name> [--public] [--no-hash] [--
 bash create-collection.sh --lookup --owner <org> --name <name>
 ```
 
-### Collections
-
-New models are often prepared before their name is public, and the HF organization
-includes members that should not see the name. In that case a private collection
-(the default) can be created up front titled with the sha256 of the model name, so
-the name is not exposed on the Hub; the collection slug is stable, so the collection
-link can be shared (e.g. with partners for marketing material) and the collection
-renamed later without breaking the link:
-
-```bash
-# Create the collection and note down the slug it prints
-bash create-collection.sh --owner <org> --name "New Model"
-
-# Look the slug up again later from the name (hashing is deterministic)
-bash create-collection.sh --lookup --owner <org> --name "New Model"
-
-# Reference the collection in the model's config.sh
-COLLECTION="<org>/<slug>"
-```
-
-When `COLLECTION` is set in a model's [config.sh](models/), `convert.sh` adds the
-uploaded model repo to the collection after each upload.
-
 ## Notes
 
 - Models are converted only if at least one of the source models has been updated

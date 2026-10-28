@@ -65,5 +65,5 @@ bash create-collection.sh --lookup --owner <org> --name <name>
 
 - A maintainer from the [ggml-org/hf](https://github.com/orgs/ggml-org/teams/hf) team can start the workflow manually from the [Actions pane](https://github.com/ggml-org/convert/actions/workflows/main.yml)
 - The conversion uses the latest `master` of [llama.cpp](https://github.com/ggml-org/llama.cpp) unless `--llama-commit` is set
-- If a model's [config.sh](models/) sets `COLLECTION`, the collection must already exist (e.g. created with `create-collection.sh`); the conversion fails otherwise
-- Collection names are hashed with sha256 by default; lookup is exact (case-sensitive), so use the same name as when the collection was created
+- If a model's [config.sh](models/) sets `COLLECTION`, the collection must already exist (e.g. created with `create-collection.sh`)
+- Collection names case-sensitive

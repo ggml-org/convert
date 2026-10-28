@@ -12,8 +12,17 @@ FORCE=false
 KEEP=false
 NO_UPLOAD=false
 LLAMA_COMMIT=""
-LOCAL_MODEL=""
 LOCAL_LLAMA=""
+
+# Parse environment PATH_ variables for any local models. For example
+# PATH_PRIMARY will be accessible using ${local_paths[PRIMARY]}.
+declare -A local_paths=()
+while IFS= read -r var; do
+    if [ -n "${!var}" ]; then
+        local_paths["${var#PATH_}"]="${!var}"
+    fi
+done < <(compgen -v | grep '^PATH_' || true)
+
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --owner)
@@ -44,10 +53,6 @@ while [[ $# -gt 0 ]]; do
             LLAMA_COMMIT="$2"
             shift 2
             ;;
-        --local-model)
-            LOCAL_MODEL="$2"
-            shift 2
-            ;;
         --local-llama)
             LOCAL_LLAMA="$2"
             shift 2
@@ -69,10 +74,15 @@ if [ -n "$ONE_MODEL" ] && [ -n "$FILTER_REGEX" ]; then
     exit 1
 fi
 
-if [ -n "$LOCAL_MODEL" ] && [ ! -d "$LOCAL_MODEL" ]; then
-    echo "Error: --local-model: no such directory: $LOCAL_MODEL"
-    exit 1
-fi
+local_inputs=false
+for key in "${!local_paths[@]}"; do
+    if [ ! -d "${local_paths[$key]}" ]; then
+        echo "Error: PATH_$key: no such directory: ${local_paths[$key]}"
+        exit 1
+    fi
+    local_paths[$key]="$(cd "${local_paths[$key]}" && pwd)"
+    local_inputs=true
+done
 
 if [ -n "$LOCAL_LLAMA" ] && [ ! -d "$LOCAL_LLAMA" ]; then
     echo "Error: --local-llama: no such directory: $LOCAL_LLAMA"
@@ -93,7 +103,7 @@ export HF_XET_HIGH_PERFORMANCE="${HF_XET_HIGH_PERFORMANCE:-1}"
 
 repo_create_flags=(--type model --exist-ok)
 upload_flags=()
-if [ -n "$LOCAL_MODEL" ]; then
+if [ "$local_inputs" = true ]; then
     repo_create_flags+=(--private)
     upload_flags+=(--private)
 fi
@@ -101,7 +111,7 @@ fi
 ensure_destination_repo() {
     local repo_id="$1"
     hf repos create "$repo_id" "${repo_create_flags[@]}"
-    if [ -n "$LOCAL_MODEL" ]; then
+    if [ "$local_inputs" = true ]; then
         hf repos settings "$repo_id" --private
     fi
 }
@@ -228,13 +238,23 @@ for config_path in "${config_paths[@]}"; do
     # Collect all DEP_* variable keys (e.g. PRIMARY, DFLASH, EAGLE3)
     dep_keys=$(compgen -v | grep '^DEP_' | sed 's/^DEP_//' | sort)
 
+    model_has_local_inputs=false
+    for key in $dep_keys; do
+        local_path="${local_paths[$key]:-}"
+        if [ -n "$local_path" ]; then
+            export "PATH_$key=$local_path"
+            model_has_local_inputs=true
+        fi
+    done
+
     # Fetch current SHAs for all dependencies
     current_sha_lines=""
     for key in $dep_keys; do
         repo_var="DEP_$key"
         repo="${!repo_var}"
 
-        if [ -n "$LOCAL_MODEL" ]; then
+        path_var="PATH_$key"
+        if [ -n "${!path_var:-}" ]; then
             sha="local"
         else
             echo ">>> Checking for updates in $repo ($key)"
@@ -249,7 +269,7 @@ for config_path in "${config_paths[@]}"; do
         current_sha_lines+="${key}=${sha}"$'\n'
     done
 
-    if [ "$FORCE" = true ] || [ "$NO_UPLOAD" = true ]; then
+    if [ "$FORCE" = true ] || [ "$NO_UPLOAD" = true ] || [ "$model_has_local_inputs" = true ]; then
         echo ">>> Skipping destination SHA check, converting locally"
         needs_convert=true
     else
@@ -302,9 +322,9 @@ for config_path in "${config_paths[@]}"; do
         repo_var="DEP_$key"
         repo="${!repo_var}"
 
-        if [ -n "$LOCAL_MODEL" ]; then
-            echo ">>> Using local model for $key: $LOCAL_MODEL"
-            export "PATH_$key=$LOCAL_MODEL"
+        path_var="PATH_$key"
+        if [ -n "${!path_var:-}" ]; then
+            echo ">>> Using local model for $key: ${!path_var}"
             continue
         fi
 

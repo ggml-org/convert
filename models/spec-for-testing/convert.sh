@@ -69,16 +69,11 @@ python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_DFLASH2" \
 "$QUANTIZE" "$OUTPUT_DIR/dflash2-Qwen3.8-27B-BF16.gguf" \
     "$OUTPUT_DIR/dflash2-Qwen3.8-27B-Q8_0.gguf" Q8_0 1>&2
 
-# Nemotron 24GB target and LiLiCorr draft are already natively quantized.
-python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_NEMOTRON" \
-    --outtype bf16 \
-    --outfile "$OUTPUT_DIR/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf" \
-    --model-name "NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB"
-
-python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_LILICORR" \
-    --outtype bf16 --target-model "$PATH_NEMOTRON" \
-    --outfile "$OUTPUT_DIR/lilicorr-NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB-NVFP4.gguf" \
-    --model-name "NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB-LiLiCorr"
+# The Nemotron 24GB target and LiLiCorr draft are already published as official GGUFs.
+cp "$PATH_NEMOTRON/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf" \
+    "$OUTPUT_DIR/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf"
+cp "$PATH_LILICORR/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB-LiLiCorr.gguf" \
+    "$OUTPUT_DIR/lilicorr-NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB-NVFP4.gguf"
 
 cat >> "$OUTPUT_DIR/.produced_files" <<'EOF'
 Qwen3.5-4B-MTP-Q4_K_M.gguf

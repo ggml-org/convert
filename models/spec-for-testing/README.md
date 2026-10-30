@@ -27,8 +27,8 @@ and LiLiCorr.
 - https://huggingface.co/AngelSlim/Qwen3-4B_eagle3
 - https://huggingface.co/Qwen/Qwen3.8-27B
 - https://huggingface.co/incoai/Qwen3.8-27B-DFlash2
-- https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB
-- https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB-LiLiCorr
+- https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB-GGUF
+- https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB-LiLiCorr-GGUF
 
 ### Licenses
 

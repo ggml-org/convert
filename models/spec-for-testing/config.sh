@@ -11,5 +11,5 @@ DEP_EAGLE3="AngelSlim/Qwen3-4B_eagle3"
 DEP_QWEN38="Qwen/Qwen3.8-27B"
 DEP_DFLASH2="incoai/Qwen3.8-27B-DFlash2"
 
-DEP_NEMOTRON="nvidia/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB"
-DEP_LILICORR="nvidia/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB-LiLiCorr"
+DEP_NEMOTRON="nvidia/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB-GGUF"
+DEP_LILICORR="nvidia/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB-LiLiCorr-GGUF"

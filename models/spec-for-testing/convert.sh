@@ -71,7 +71,7 @@ python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_DFLASH2" \
 
 # Nemotron 24GB target and LiLiCorr draft are already natively quantized.
 python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_NEMOTRON" \
-    --outtype bf16 --no-mtp \
+    --outtype bf16 \
     --outfile "$OUTPUT_DIR/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf" \
     --model-name "NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB"
 

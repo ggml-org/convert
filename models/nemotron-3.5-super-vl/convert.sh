@@ -38,6 +38,7 @@ FLAGS_Q4_0="--pure \
     --tensor-type shexp=q8_0 \
     --tensor-type attn_=q8_0 \
     --tensor-type ssm_=q8_0 \
+    --tensor-type latent=q8_0 \
     "
 
 # Main model: Q8_0, Q4_0

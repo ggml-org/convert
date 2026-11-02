@@ -14,6 +14,9 @@ NO_UPLOAD=false
 LLAMA_COMMIT=""
 LOCAL_LLAMA=""
 
+DEFAULT_FILTER_REGEX=".*"
+DEFAULT_EXCLUDE_REGEX="^mimo-v2.6-pro-mopd$"
+
 # Parse environment PATH_ variables for any local models. For example
 # PATH_PRIMARY will be accessible using ${local_paths[PRIMARY]}.
 declare -A local_paths=()
@@ -175,7 +178,17 @@ elif [ -n "$FILTER_REGEX" ]; then
         exit 1
     fi
 else
-    config_paths=(models/*/config.sh)
+    config_paths=()
+    for candidate in models/*/config.sh; do
+        dir=$(basename "$(dirname "$candidate")")
+        if echo "$dir" | grep -qE "$DEFAULT_FILTER_REGEX" && ! echo "$dir" | grep -qE "$DEFAULT_EXCLUDE_REGEX"; then
+            config_paths+=("$candidate")
+        fi
+    done
+    if [ ${#config_paths[@]} -eq 0 ]; then
+        echo "Error: No models matched the default filter"
+        exit 1
+    fi
 fi
 
 # Cross-platform CPU count

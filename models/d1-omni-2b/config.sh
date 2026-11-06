@@ -1,0 +1,3 @@
+DISPLAY_NAME="d1-Omni-2B"
+DEST_REPO="d1-Omni-2B-GGUF"
+DEP_PRIMARY="LiquidAI/d1-Omni-2B"

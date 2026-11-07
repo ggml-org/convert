@@ -13,7 +13,7 @@ hf download "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF" chat_template.ji
 # --- Conversions ---
 
 # Main model: BF16 (intermediate for quantization only)
-python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" --no-tensor-first-split \
+python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" --no-tensor-first-split --split-max-size 100G \
     --outtype bf16 --outfile "$OUTPUT_DIR/${DISPLAY_NAME}-BF16.gguf" --model-name "$DISPLAY_NAME"
 
 # DSpark sidecar: BF16 (the mtp.* tensors of the same checkpoint)
@@ -42,7 +42,7 @@ FLAGS_Q2_K="--pure \
 "
 
 # Main model: MXFP4_MOE + Q2_K overrides
-"$QUANTIZE" --keep-split --allow-requantize $FLAGS_Q2_K "$OUTPUT_DIR/${DISPLAY_NAME}-BF16-00001-of-00002.gguf" "$OUTPUT_DIR/${DISPLAY_NAME}-Q2_K.gguf" MXFP4_MOE 1>&2
+"$QUANTIZE" --keep-split --allow-requantize $FLAGS_Q2_K "$OUTPUT_DIR/${DISPLAY_NAME}-BF16-00001-of-"*.gguf "$OUTPUT_DIR/${DISPLAY_NAME}-Q2_K.gguf" MXFP4_MOE 1>&2
 
 # DSpark sidecar: MXFP4
 "$QUANTIZE" "$OUTPUT_DIR/dspark-${DISPLAY_NAME}-BF16.gguf" "$OUTPUT_DIR/dspark-${DISPLAY_NAME}-MXFP4.gguf" MXFP4_MOE 1>&2
@@ -53,8 +53,9 @@ python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" \
 
 # --- Produced files ---
 
-echo "${DISPLAY_NAME}-Q2_K-00001-of-00002.gguf" >> "$OUTPUT_DIR/.produced_files"
-echo "${DISPLAY_NAME}-Q2_K-00002-of-00002.gguf" >> "$OUTPUT_DIR/.produced_files"
+for f in "$OUTPUT_DIR/${DISPLAY_NAME}-Q2_K-"*.gguf; do
+    basename "$f" >> "$OUTPUT_DIR/.produced_files"
+done
 echo "dspark-${DISPLAY_NAME}-BF16.gguf" >> "$OUTPUT_DIR/.produced_files"
 echo "dspark-${DISPLAY_NAME}-MXFP4.gguf" >> "$OUTPUT_DIR/.produced_files"
 echo "mmproj-${DISPLAY_NAME}-BF16.gguf" >> "$OUTPUT_DIR/.produced_files"

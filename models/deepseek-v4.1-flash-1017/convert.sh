@@ -27,7 +27,7 @@ python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" \
 # --- Quantizations ---
 
 FLAGS_Q2_K="--pure \
-    --tensor-type per_layer_token_embd.weight=q4_0 \
+    --tensor-type per_layer_token_embd.weight=iq4_nl \
     --tensor-type token_embd.weight=q8_0 \
     --tensor-type ^output.weight=q8_0 \
     --tensor-type attn_=q8_0 \
@@ -36,6 +36,7 @@ FLAGS_Q2_K="--pure \
     --tensor-type hc_ffn=q8_0 \
     --tensor-type indexer=q8_0 \
     --tensor-type output_hc=q8_0 \
+    --tensor-type engram_kv=q8_0 \
     --tensor-type ffn_down_exps=mxfp4 \
     --tensor-type ffn_gate_exps=q2_k \
     --tensor-type ffn_up_exps=q2_k \
@@ -43,6 +44,25 @@ FLAGS_Q2_K="--pure \
 
 # Main model: MXFP4_MOE + Q2_K overrides
 "$QUANTIZE" --keep-split --allow-requantize $FLAGS_Q2_K "$OUTPUT_DIR/${DISPLAY_NAME}-BF16-00001-of-"*.gguf "$OUTPUT_DIR/${DISPLAY_NAME}-Q2_K.gguf" MXFP4_MOE 1>&2
+
+FLAGS_Q2_K_S="--pure \
+    --tensor-type per_layer_token_embd.weight=iq4_nl \
+    --tensor-type token_embd.weight=q8_0 \
+    --tensor-type ^output.weight=q8_0 \
+    --tensor-type attn_=q8_0 \
+    --tensor-type shexp=q8_0 \
+    --tensor-type hc_attn=q8_0 \
+    --tensor-type hc_ffn=q8_0 \
+    --tensor-type indexer=q8_0 \
+    --tensor-type output_hc=q8_0 \
+    --tensor-type engram_kv=q8_0 \
+    --tensor-type ffn_down_exps=q2_k \
+    --tensor-type ffn_gate_exps=q2_k \
+    --tensor-type ffn_up_exps=q2_k \
+"
+
+# Main model: MXFP4_MOE + Q2_K_S overrides
+"$QUANTIZE" --keep-split --allow-requantize $FLAGS_Q2_K_S "$OUTPUT_DIR/${DISPLAY_NAME}-BF16-00001-of-"*.gguf "$OUTPUT_DIR/${DISPLAY_NAME}-Q2_K_S.gguf" MXFP4_MOE 1>&2
 
 # DSpark sidecar: MXFP4
 "$QUANTIZE" "$OUTPUT_DIR/dspark-${DISPLAY_NAME}-BF16.gguf" "$OUTPUT_DIR/dspark-${DISPLAY_NAME}-MXFP4.gguf" MXFP4_MOE 1>&2
@@ -53,7 +73,7 @@ python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" \
 
 # --- Produced files ---
 
-for f in "$OUTPUT_DIR/${DISPLAY_NAME}-Q2_K-"*.gguf; do
+for f in "$OUTPUT_DIR/${DISPLAY_NAME}-Q2_K-"*.gguf "$OUTPUT_DIR/${DISPLAY_NAME}-Q2_K_S-"*.gguf; do
     basename "$f" >> "$OUTPUT_DIR/.produced_files"
 done
 echo "dspark-${DISPLAY_NAME}-BF16.gguf" >> "$OUTPUT_DIR/.produced_files"

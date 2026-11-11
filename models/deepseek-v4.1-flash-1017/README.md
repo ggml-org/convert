@@ -26,7 +26,6 @@ llama serve -hf __owner__/DeepSeek-V4.1-Flash-1017-GGUF
 - The Q2_K quantization keeps the routed down experts in MXFP4.
 - The Q2_K_S quantization converts the routed down experts to Q2_K.
 - The Engram KV tensors are Q8_0 and the PLE table is IQ4_NL.
-- The chat template is taken from https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF because the source repo does not provide one.
 - The Q2 models do not use an imatrix calibration.
 
 ### TODOs

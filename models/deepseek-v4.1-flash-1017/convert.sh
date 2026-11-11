@@ -7,9 +7,6 @@ LLAMA_CPP="$2"
 DISPLAY_NAME="DeepSeek-V4.1-Flash-1017"
 QUANTIZE="$LLAMA_CPP/build/bin/llama-quantize"
 
-# The source repo has no Jinja chat template; embed the one from the ISTA-DASLab GGUF repo.
-hf download "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF" chat_template.jinja --local-dir "$PATH_PRIMARY" 1>&2
-
 # --- Conversions ---
 
 # Main model: BF16 (intermediate for quantization only)

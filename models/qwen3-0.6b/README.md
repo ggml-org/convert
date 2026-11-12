@@ -21,9 +21,5 @@ llama serve -hf __owner__/Qwen3-0.6B-GGUF
 ### Source models
 - https://huggingface.co/Qwen/Qwen3-0.6B
 
-### TODOs
-
-- add info
-
 > [!IMPORTANT]
 > This model is automatically converted using https://github.com/ggml-org/convert

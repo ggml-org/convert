@@ -25,9 +25,5 @@ llama serve -hf __owner__/Qwen3-Coder-30B-A3B-Instruct-GGUF
 - `Q8_0` and `Q4_K_M`: the routed experts use the base quantization type.
 - In `Q4_K_M` the small non-expert tensors (embeddings, attention) are kept at Q8_0.
 
-### TODOs
-
-- add info
-
 > [!IMPORTANT]
 > This model is automatically converted using https://github.com/ggml-org/convert

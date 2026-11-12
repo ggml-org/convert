@@ -27,9 +27,5 @@ llama serve -hf __owner__/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-GGUF
 - https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-NVFP4-DSpark
 -->
 
-### TODOs
-
-- add info
-
 > [!IMPORTANT]
 > This model is automatically converted using https://github.com/ggml-org/convert

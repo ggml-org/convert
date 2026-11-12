@@ -29,9 +29,5 @@ llama serve -hf __owner__/Qwen3.8-Flash-Next-GGUF
 - Includes a Q8_0 mmproj for the vision encoder, MTP sidecars (Q8_0 / Q4_0) and a DFlash2 draft sidecar (BF16 / Q8_0 / Q4_0) for speculative decoding.
 - The `Q2_K` routed gate/up expert tensors are calibrated with the imatrix from https://huggingface.co/AesSedai/Qwen3.8-Flash-Next-GGUF
 
-### TODOs
-
-- add info
-
 > [!IMPORTANT]
 > This model is automatically converted using https://github.com/ggml-org/convert

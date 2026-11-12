@@ -30,8 +30,5 @@ llama serve -hf __owner__/GLM-5.3-Flash-GGUF
 - Includes a Q8_0 mmproj for the vision encoder and MTP sidecars (Q8_0 / Q4_0) for speculative decoding.
 - The Q2_K / Q2_K_S expert tensors are calibrated with the imatrix from https://huggingface.co/AesSedai/GLM-5.3-Flash-GGUF
 
-### TODOs
-- add info
-
 > [!IMPORTANT]
 > This model is automatically converted using https://github.com/ggml-org/convert

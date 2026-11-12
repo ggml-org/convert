@@ -22,9 +22,5 @@ llama serve -hf __owner__/gpt-oss-20b-GGUF
 - https://huggingface.co/openai/gpt-oss-20b
 - https://huggingface.co/RedHatAI/gpt-oss-20b-speculator.eagle3
 
-### TODOs
-
-- add info
-
 > [!IMPORTANT]
 > This model is automatically converted using https://github.com/ggml-org/convert

@@ -28,9 +28,5 @@ llama serve -hf __owner__/Flint-GGUF
 - Text-only source: no mmproj, MTP or DFlash sidecars.
 - Requires a llama.cpp build with Flint support: https://github.com/ggml-org/llama.cpp/pull/30928
 
-### TODOs
-
-- add info
-
 > [!IMPORTANT]
 > This model is automatically converted using https://github.com/ggml-org/convert

@@ -22,8 +22,6 @@ llama serve -hf __owner__/NVIDIA-Nemotron-3-Nano-30B-A3B-GGUF
 - https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16
 
 ### TODOs
-
-- add info
 - add MTP
 
 > [!IMPORTANT]

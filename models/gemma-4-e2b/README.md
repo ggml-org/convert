@@ -21,9 +21,5 @@ llama serve -hf __owner__/gemma-4-E2B-GGUF
 ### Source models
 - https://huggingface.co/google/gemma-4-E2B
 
-### TODOs
-
-- add info
-
 > [!IMPORTANT]
 > This model is automatically converted using https://github.com/ggml-org/convert

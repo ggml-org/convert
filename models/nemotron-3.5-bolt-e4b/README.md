@@ -20,9 +20,5 @@ llama serve -hf __owner__/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF
 - https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB-BF16
 - https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB-DFlash-NVFP4
 
-### TODOs
-
-- add info
-
 > [!IMPORTANT]
 > This model is automatically converted using https://github.com/ggml-org/convert

@@ -22,9 +22,5 @@ llama serve -hf __owner__/Qwen3.6-35B-A3B-GGUF
 - https://huggingface.co/Qwen/Qwen3.6-35B-A3B
 - https://huggingface.co/z-lab/Qwen3.6-35B-A3B-DFlash
 
-### TODOs
-
-- add info
-
 > [!IMPORTANT]
 > This model is automatically converted using https://github.com/ggml-org/convert

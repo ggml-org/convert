@@ -24,8 +24,5 @@ llama serve -hf __owner__/DeepSeek-V4-Flash-0731-GGUF
 ### Notes
 - Currently, the Q2 models do not use an imatrix calibration due to lack of one.
 
-### TODOs
-- add info
-
 > [!IMPORTANT]
 > This model is automatically converted using https://github.com/ggml-org/convert

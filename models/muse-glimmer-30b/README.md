@@ -26,9 +26,5 @@ llama serve -hf __owner__/Muse-Glimmer-30B-GGUF
 - Includes a Q8_0 mmproj for the vision encoder.
 - Includes a DFlash drafter sidecar (BF16, Q8_0 and Q4_0) for speculative decoding.
 
-### TODOs
-
-- add info
-
 > [!IMPORTANT]
 > This model is automatically converted using https://github.com/ggml-org/convert

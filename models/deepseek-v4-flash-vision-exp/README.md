@@ -25,8 +25,5 @@ llama serve -hf __owner__/DeepSeek-V4-Flash-Vision-Exp-GGUF
 - Includes a Q8_0 mmproj for the vision encoder.
 - Currently, the Q2 models do not use an imatrix calibration due to lack of one.
 
-### TODOs
-- add info
-
 > [!IMPORTANT]
 > This model is automatically converted using https://github.com/ggml-org/convert

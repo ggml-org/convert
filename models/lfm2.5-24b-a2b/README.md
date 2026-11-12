@@ -25,9 +25,5 @@ llama serve -hf __owner__/LFM2.5-24B-A2B-GGUF
 - Q8_0 and Q4_K_M use the same quantization as LiquidAI's own GGUFs: https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF
 - For a smaller build, LiquidAI also publishes a Quantization-Aware Distillation (QAD) Q4_0, trained to recover the accuracy lost to Q4_0 quantization.
 
-### TODOs
-
-- add info
-
 > [!IMPORTANT]
 > This model is automatically converted using https://github.com/ggml-org/convert

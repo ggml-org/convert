@@ -1,0 +1,3 @@
+DISPLAY_NAME="Soprano-1.1-80M"
+DEST_REPO="Soprano-1.1-80M-GGUF"
+DEP_PRIMARY="ekwek/Soprano-1.1-80M"

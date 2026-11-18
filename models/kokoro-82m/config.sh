@@ -1,0 +1,3 @@
+DISPLAY_NAME="Kokoro-82M"
+DEST_REPO="Kokoro-82M-GGUF"
+DEP_PRIMARY="hexgrad/Kokoro-82M"

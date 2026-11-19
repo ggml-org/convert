@@ -26,9 +26,5 @@ llama serve -hf __owner__/LFM3-1.7B-GGUF
 - For a smaller build, LiquidAI also publishes a Quantization-Aware Distillation (QAD) Q4_0, trained to recover the accuracy lost to Q4_0 quantization.
 - Requires a llama.cpp build with LFM3 support: https://github.com/ggml-org/llama.cpp/pull/31252
 
-### TODOs
-
-- add info
-
 > [!IMPORTANT]
 > This model is automatically converted using https://github.com/ggml-org/convert

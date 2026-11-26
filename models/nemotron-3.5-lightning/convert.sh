@@ -18,19 +18,19 @@ python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_PRIMARY" \
     --outtype bf16 --outfile "$OUTPUT_DIR/mtp-${DISPLAY_NAME}-BF16.gguf" --mtp --model-name "$DISPLAY_NAME"
 
 # DFlash
-#python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_DFLASH" \
-#    --outtype bf16 --target-model "$PATH_PRIMARY" \
-#    --outfile "$OUTPUT_DIR/dflash-${DISPLAY_NAME}-NVFP4.gguf" --model-name "${DISPLAY_NAME}-DFlash"
+python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_DFLASH" \
+    --outtype bf16 --target-model "$PATH_PRIMARY" \
+    --outfile "$OUTPUT_DIR/dflash-${DISPLAY_NAME}-NVFP4.gguf" --model-name "${DISPLAY_NAME}-DFlash"
 
 # DSpark
-#python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_DSPARK" \
-#    --target-model "$PATH_PRIMARY" \
-#    --fp8-as-q8 \
-#    --outfile "$OUTPUT_DIR/dspark-${DISPLAY_NAME}-NVFP4.gguf" --model-name "${DISPLAY_NAME}-DSpark"
+python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_DSPARK" \
+    --target-model "$PATH_PRIMARY" \
+    --fp8-as-q8 \
+    --outfile "$OUTPUT_DIR/dspark-${DISPLAY_NAME}-NVFP4.gguf" --model-name "${DISPLAY_NAME}-DSpark"
 
 # NVFP4 model
-#python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_NVFP4" \
-#    --outtype bf16 --outfile "$OUTPUT_DIR/${DISPLAY_NAME}-NVFP4.gguf" --no-mtp --model-name "${DISPLAY_NAME}-NVFP4"
+python3 "$LLAMA_CPP/convert_hf_to_gguf.py" "$PATH_NVFP4" \
+    --outtype bf16 --outfile "$OUTPUT_DIR/${DISPLAY_NAME}-NVFP4.gguf" --no-mtp --model-name "${DISPLAY_NAME}-NVFP4"
 
 # --- Quantizations ---
 
@@ -56,11 +56,11 @@ FLAGS_Q4_0="--pure \
 echo "${DISPLAY_NAME}-BF16.gguf"        >> "$OUTPUT_DIR/.produced_files"
 echo "${DISPLAY_NAME}-Q8_0.gguf"        >> "$OUTPUT_DIR/.produced_files"
 echo "${DISPLAY_NAME}-Q4_0.gguf"        >> "$OUTPUT_DIR/.produced_files"
-#echo "${DISPLAY_NAME}-NVFP4.gguf"      >> "$OUTPUT_DIR/.produced_files"
+echo "${DISPLAY_NAME}-NVFP4.gguf"      >> "$OUTPUT_DIR/.produced_files"
 
 echo "mtp-${DISPLAY_NAME}-BF16.gguf"    >> "$OUTPUT_DIR/.produced_files"
 echo "mtp-${DISPLAY_NAME}-Q8_0.gguf"    >> "$OUTPUT_DIR/.produced_files"
 echo "mtp-${DISPLAY_NAME}-Q4_0.gguf"    >> "$OUTPUT_DIR/.produced_files"
 
-#echo "dflash-${DISPLAY_NAME}-NVFP4.gguf" >> "$OUTPUT_DIR/.produced_files"
-#echo "dspark-${DISPLAY_NAME}-NVFP4.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "dflash-${DISPLAY_NAME}-NVFP4.gguf" >> "$OUTPUT_DIR/.produced_files"
+echo "dspark-${DISPLAY_NAME}-NVFP4.gguf" >> "$OUTPUT_DIR/.produced_files"
